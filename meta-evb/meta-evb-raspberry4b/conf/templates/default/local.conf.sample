@@ -39,6 +39,7 @@ SSTATE_MIRRORS ?= "file://.* file://${YOCTO_SHARED_CACHE}/sstate-cache/PATH"
 OBMC_IMAGE_INCLUDE = "mmc"
 require conf/machine/include/obmc-bsp-common.inc
 require conf/machine/include/obmc-evb-common.inc
+<<<<<<< HEAD
 
 <<<<<<< HEAD
 
@@ -71,9 +72,15 @@ CMDLINE_SERIAL = "console=ttyS0,115200 console=ttyAMA0,115200 console=tty1 early
 ENABLE_DWC2_PERIPHERAL = "1"
 CMDLINE_ROOT_PARTITION = "/dev/sda2"
 =======
+=======
+>>>>>>> ae5f160563 (meta-evb: add shared DL_DIR/SSTATE mirror defaults for rpi4b/rpi5b templates (#4))
 # Generate only SD/MMC artifacts for Raspberry Pi.
 IMAGE_FSTYPES = "wic.xz mmc-ext4-tar"
 
+# RPi SD image layout uses boot/root labels; do not enable phosphor-mmc initramfs path.
+DISTRO_FEATURES:remove = "phosphor-mmc"
+DISTROOVERRIDES:remove = "df-phosphor-mmc"
+RDEPENDS:packagegroup-obmc-apps-software:remove = "phosphor-software-manager-updater-mmc"
 CONNECTIVITY_CHECK_URIS = "https://www.baidu.com/"
 
 # Build kernel as Image; use explicit linux.bin for firmware kernel loading
