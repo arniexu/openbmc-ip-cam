@@ -32,11 +32,15 @@ SSTATE_MIRRORS ?= "file://.* file://${YOCTO_SHARED_CACHE}/sstate-cache/PATH"
 # Set the root password to '0penBmc'
 # Defaults from meta-phosphor/conf/distro/include/phosphor-defaults.inc
 
+<<<<<<< HEAD
 #require conf/distro/include/phosphor-mmc.inc
+=======
+>>>>>>> 53da7b5bec (feat: system run ok on raspberry4b board, usb rndis through typec interface)
 OBMC_IMAGE_INCLUDE = "mmc"
 require conf/machine/include/obmc-bsp-common.inc
 require conf/machine/include/obmc-evb-common.inc
 
+<<<<<<< HEAD
 
 # Generate only SD/MMC artifacts for Raspberry Pi.
 IMAGE_FSTYPES = "wic.xz mmc-ext4-tar"
@@ -66,4 +70,29 @@ CMDLINE_SERIAL = "console=ttyS0,115200 console=ttyAMA0,115200 console=tty1 early
 
 ENABLE_DWC2_PERIPHERAL = "1"
 CMDLINE_ROOT_PARTITION = "/dev/sda2"
+=======
+# Generate only SD/MMC artifacts for Raspberry Pi.
+IMAGE_FSTYPES = "wic.xz mmc-ext4-tar"
+
+CONNECTIVITY_CHECK_URIS = "https://www.baidu.com/"
+
+# Build kernel as Image; use explicit linux.bin for firmware kernel loading
+KERNEL_IMAGETYPE = "Image"
+RPI_USE_U_BOOT = "0"
+RPI_EXTRA_IMAGE_BOOT_FILES = "linux.bin"
+
+# RPi4 debug output on both HDMI and UART (GPIO14/15)
+ENABLE_UART = "1"
+SERIAL_CONSOLES = "115200;ttyAMA0"
+RPI_EXTRA_CONFIG:append = "\ndtoverlay=uart0\n"
+RPI_EXTRA_CONFIG:append = "\nhdmi_drive=2\n"
+RPI_EXTRA_CONFIG:append = "\nuart_2ndstage=1\n"
+RPI_EXTRA_CONFIG:append = "\nsha256=1\n"
+RPI_EXTRA_CONFIG:append = "\nkernel=linux.bin\n"
+
+# Force kernel boot logs to local display and serial console
+CMDLINE_SERIAL = "console=ttyAMA0,115200 console=tty1 earlycon loglevel=8 consoleblank=0 vt.global_cursor_default=1 systemd.getty_auto=yes"
+
+ENABLE_DWC2_PERIPHERAL = "1"
+>>>>>>> 53da7b5bec (feat: system run ok on raspberry4b board, usb rndis through typec interface)
 CMDLINE_RNDIS = "modules-load=dwc2,g_ether"
