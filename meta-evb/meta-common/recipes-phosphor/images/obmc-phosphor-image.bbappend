@@ -1,15 +1,22 @@
 ROOTFS_POSTPROCESS_COMMAND:append:evb-rpi4-64 = " usbroot_runtime_fixups;"
+WIC_CREATE_EXTRA_ARGS:append:evb-rpi4-64 = " ${@'--no-fstab-update' if (d.getVar('CMDLINE_ROOT_PARTITION') or '').startswith('/dev/sd') else ''}"
 
 usbroot_runtime_fixups() {
+    bbnote "usbroot_runtime_fixups: CMDLINE_ROOT_PARTITION=${CMDLINE_ROOT_PARTITION}"
+    case "${CMDLINE_ROOT_PARTITION}" in
+        /dev/sd*)
+            bbnote "usbroot_runtime_fixups: USB root detected, WIC is expected to use --no-fstab-update"
+            ;;
+        *)
+            bbnote "usbroot_runtime_fixups: non-USB root detected, WIC should run without --no-fstab-update"
+            ;;
+    esac
+
     if [ -f ${IMAGE_ROOTFS}/etc/fstab ]; then
         sed -i -e 's#^/var/persist/home[[:space:]]\+/home[[:space:]]\+none[[:space:]]\+bind[[:space:]]\+0[[:space:]]\+0#tmpfs                /home                tmpfs      mode=0755,nodev,nosuid       0  0#' ${IMAGE_ROOTFS}/etc/fstab
-        sed -i -e '/^[[:space:]]*\/dev\/mmcblk0p1[[:space:]]\+\/boot[[:space:]]/d' ${IMAGE_ROOTFS}/etc/fstab
         grep -q '^tmpfs[[:space:]]\+/var/persist[[:space:]]\+tmpfs' ${IMAGE_ROOTFS}/etc/fstab || \
             echo 'tmpfs                /var/persist         tmpfs      mode=0755,nodev,nosuid       0  0' >> ${IMAGE_ROOTFS}/etc/fstab
     fi
-
-    install -d ${IMAGE_ROOTFS}/etc/systemd/system
-    ln -snf /dev/null ${IMAGE_ROOTFS}/etc/systemd/system/boot.mount
 
     install -d ${IMAGE_ROOTFS}/etc/tmpfiles.d
     cat > ${IMAGE_ROOTFS}/etc/tmpfiles.d/usbroot-volatile.conf <<'EOF'
