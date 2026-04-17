@@ -8,23 +8,31 @@ PACKAGES = " \
         ${PN}-bmc-state-mgmt \
         ${PN}-bmcweb \
         ${PN}-chassis-state-mgmt \
+        ${PN}-console \
         ${PN}-dbus-monitor \
         ${PN}-extras \
         ${PN}-devtools \
         ${PN}-fan-control \
+        ${PN}-health-monitor \
+        ${PN}-host-state-mgmt \
         ${PN}-ikvm \
+        ${PN}-inventory \
         ${PN}-leds \
         ${PN}-logging \
         ${PN}-remote-logging \
         ${PN}-rng \
         ${PN}-sensors \
         ${PN}-software \
+        ${PN}-host-check-mgmt \
         ${PN}-debug-collector \
         ${PN}-settings \
         ${PN}-network \
+        ${PN}-telemetry \
         ${PN}-user-mgmt \
         ${PN}-user-mgmt-ldap \
+        ${PN}-dmtf-pmci \
         ${PN}-webui \
+        ${PN}-tpm \
         "
 
 SUMMARY:${PN}-bmc-state-mgmt = "BMC state management"
@@ -43,6 +51,11 @@ SUMMARY:${PN}-chassis-state-mgmt = "Chassis state management"
 RDEPENDS:${PN}-chassis-state-mgmt = " \
         ${VIRTUAL-RUNTIME_obmc-chassis-state-manager} \
         obmc-phosphor-power \
+        "
+
+SUMMARY:${PN}-console = "Serial over LAN support"
+RDEPENDS:${PN}-console = " \
+        obmc-console \
         "
 
 # Deprecated - add new packages to an existing packagegroup or create a new one.

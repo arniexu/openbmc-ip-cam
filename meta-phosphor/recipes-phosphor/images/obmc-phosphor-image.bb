@@ -11,17 +11,41 @@ ROOTFS_POSTPROCESS_COMMAND += "remove_etc_version"
 
 IMAGE_LINGUAS = ""
 IMAGE_FEATURES += " \
+        obmc-bmc-state-mgmt \
+        obmc-bmcweb \
         obmc-chassis-mgmt \
+        obmc-chassis-state-mgmt \
+        obmc-console \
+        obmc-devtools \
+        obmc-fan-control \
         obmc-fan-mgmt \
         obmc-flash-mgmt \
+        obmc-health-monitor \
         obmc-host-ctl \
         obmc-host-ipmi \
+        obmc-host-state-mgmt \
+        obmc-ikvm \
+        obmc-inventory \
+        obmc-leds \
+        obmc-logging-mgmt \
+        obmc-remote-logging-mgmt \
         obmc-net-ipmi \
+        obmc-sensors \
+        obmc-software \
         obmc-system-mgmt \
+        obmc-user-mgmt \
+        obmc-user-mgmt-ldap \
         ${@bb.utils.contains_any('DISTRO_FEATURES', \
             'obmc-ubi-fs phosphor-mmc obmc-static-norootfs', \
             'read-only-rootfs overlayfs-etc', '', d)} \
         ssh-server-dropbear \
+        obmc-debug-collector \
+        obmc-network-mgmt \
+        obmc-settings-mgmt \
+        obmc-telemetry \
+        obmc-dmtf-pmci \
+        obmc-webui \
+        obmc-tpm \
         "
 # The shadow recipe provides the binaries(like useradd, usermod) needed by the
 # phosphor-user-manager.
