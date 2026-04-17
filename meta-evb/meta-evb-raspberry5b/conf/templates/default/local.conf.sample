@@ -18,6 +18,17 @@ CONF_VERSION = "2"
 BB_NO_NETWORK = "0"
 LICENSE_FLAGS_ACCEPTED += "synaptics-killswitch"
 
+# Shared cache settings for team builds.
+# Update this path to your shared NFS/SMB cache mount.
+YOCTO_SHARED_CACHE ?= "/mnt/yocto-cache"
+DL_DIR ?= "${YOCTO_SHARED_CACHE}/downloads"
+SSTATE_DIR ?= "${YOCTO_SHARED_CACHE}/sstate-cache"
+
+# Use shared mirrors first to reduce duplicate downloads and rebuilds.
+INHERIT += "own-mirrors"
+SOURCE_MIRROR_URL ?= "file://${YOCTO_SHARED_CACHE}/downloads"
+SSTATE_MIRRORS ?= "file://.* file://${YOCTO_SHARED_CACHE}/sstate-cache/PATH"
+
 # Set the root password to '0penBmc'
 # Defaults from meta-phosphor/conf/distro/include/phosphor-defaults.inc
 
