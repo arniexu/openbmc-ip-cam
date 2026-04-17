@@ -11,7 +11,6 @@ BBLAYERS ?= " \
   ##OEROOT##/meta-openembedded/meta-networking \
   ##OEROOT##/meta-openembedded/meta-python \
   ##OEROOT##/meta-phosphor \
-  ##OEROOT##/meta-evb/meta-common \
-  ##OEROOT##/meta-evb/meta-evb-raspberry4b \
-  ##OEROOT##/meta-raspberrypi \
+  ##OEROOT##/meta-rockchip \
+  ##OEROOT##/meta-evb/meta-evb-rockchip/meta-evb-rock3a \
   "

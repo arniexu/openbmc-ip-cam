@@ -1,0 +1,9 @@
+[Unit]
+Description=Discover ONVIF cameras for go2rtc
+After=go2rtc.service network-online.target
+Wants=go2rtc.service network-online.target
+
+[Service]
+Type=oneshot
+EnvironmentFile=-/etc/default/go2rtc-discovery
+ExecStart=/usr/libexec/go2rtc/go2rtc-discovery.py

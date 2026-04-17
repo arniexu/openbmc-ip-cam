@@ -1,0 +1,1 @@
+IMAGE_INSTALL:append = " go2rtc dbus-ip-camera"

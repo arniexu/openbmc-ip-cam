@@ -1,0 +1,827 @@
+#!/usr/bin/env python3
+
+import asyncio
+import json
+import logging
+import os
+import re
+import signal
+import sys
+import time
+from pathlib import Path
+from tempfile import NamedTemporaryFile
+from typing import Dict, List, Optional
+from urllib.error import HTTPError, URLError
+from urllib.parse import parse_qs, quote, urlencode, urlparse, urlunparse
+from urllib.request import Request, urlopen
+
+from dbus_next import BusType
+from dbus_next.aio import MessageBus
+from dbus_next.service import ServiceInterface, dbus_property, method
+
+
+SERVICE_NAME = "xyz.openbmc_project.IpCamera"
+MANAGER_PATH = "/xyz/openbmc_project/ip_camera"
+DEFAULT_CONFIG_PATH = "/etc/dbus-ip-camera/config.json"
+
+LOG = logging.getLogger("dbus-ip-camera")
+
+
+def configure_logging() -> None:
+    level_name = os.getenv("DBUS_IP_CAMERA_LOG_LEVEL", "INFO").upper()
+    level = getattr(logging, level_name, logging.INFO)
+    logging.basicConfig(level=level, format="%(asctime)s %(levelname)s %(message)s")
+
+
+def sanitize_fragment(value: str, fallback: str) -> str:
+    cleaned = re.sub(r"[^a-z0-9]+", "_", value.lower()).strip("_")
+    return cleaned or fallback
+
+
+def split_name(value: str) -> Dict[str, str]:
+    parts = [part for part in value.split() if part]
+    if len(parts) >= 2:
+        return {"manufacturer": parts[0], "model": " ".join(parts[1:])}
+    if parts:
+        return {"manufacturer": "", "model": parts[0]}
+    return {"manufacturer": "", "model": ""}
+
+
+def now_usec() -> int:
+    return time.time_ns() // 1000
+
+
+def load_json(path: Path, default):
+    try:
+        with path.open("r", encoding="utf-8") as handle:
+            return json.load(handle)
+    except FileNotFoundError:
+        return default
+    except json.JSONDecodeError as error:
+        LOG.warning("Failed to parse %s: %s", path, error)
+        return default
+
+
+def atomic_write_json(path: Path, payload) -> None:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    with NamedTemporaryFile("w", encoding="utf-8", dir=path.parent, delete=False) as handle:
+        json.dump(payload, handle, indent=2, sort_keys=True)
+        handle.write("\n")
+        temp_path = Path(handle.name)
+    temp_path.replace(path)
+
+
+def strip_credentials(url: str) -> str:
+    parsed = urlparse(url)
+    host = parsed.hostname or ""
+    if ":" in host and not host.startswith("["):
+        host = f"[{host}]"
+    netloc = host
+    if parsed.port is not None:
+        netloc = f"{netloc}:{parsed.port}"
+    return urlunparse((parsed.scheme, netloc, parsed.path, parsed.params, parsed.query, parsed.fragment))
+
+
+def build_url(parsed, username: Optional[str], password: Optional[str]) -> str:
+    host = parsed.hostname or ""
+    if ":" in host and not host.startswith("["):
+        host = f"[{host}]"
+
+    netloc = host
+    if parsed.port is not None:
+        netloc = f"{netloc}:{parsed.port}"
+
+    if username is not None:
+        userinfo = quote(username, safe="")
+        userinfo += ":" + quote(password or "", safe="")
+        netloc = f"{userinfo}@{netloc}"
+
+    return urlunparse((parsed.scheme, netloc, parsed.path, parsed.params, parsed.query, parsed.fragment))
+
+
+def ensure_onvif_url(address: str) -> str:
+    parsed = urlparse(address)
+    if parsed.scheme:
+        return address
+    host = address.strip()
+    if not host:
+        raise ValueError("address is required")
+    return f"onvif://{host}/onvif/device_service"
+
+
+def extract_address(url: str) -> str:
+    parsed = urlparse(url)
+    return parsed.hostname or url
+
+
+def make_stream_name(stream_prefix: str, source_url: str, index: int) -> str:
+    parsed = urlparse(source_url)
+    query = parse_qs(parsed.query)
+    host = sanitize_fragment(parsed.hostname or "camera", "camera")
+    token = query.get("subtype", [str(index)])[0]
+    token = sanitize_fragment(token, str(index))
+    prefix = sanitize_fragment(stream_prefix, "ipcam")
+    return f"{prefix}_{host}_{token}"
+
+
+class InventoryItemInterface(ServiceInterface):
+    def __init__(self):
+        super().__init__("xyz.openbmc_project.Inventory.Item")
+        self._present = False
+
+    @dbus_property()
+    def Present(self) -> "b":
+        return self._present
+
+    def update(self, present: bool) -> None:
+        if self._present != present:
+            self._present = present
+            self.emit_properties_changed({"Present": present})
+
+
+class OperationalStatusInterface(ServiceInterface):
+    def __init__(self):
+        super().__init__("xyz.openbmc_project.State.Decorator.OperationalStatus")
+        self._functional = False
+
+    @dbus_property()
+    def Functional(self) -> "b":
+        return self._functional
+
+    def update(self, functional: bool) -> None:
+        if self._functional != functional:
+            self._functional = functional
+            self.emit_properties_changed({"Functional": functional})
+
+
+class AssetInterface(ServiceInterface):
+    def __init__(self):
+        super().__init__("xyz.openbmc_project.Inventory.Decorator.Asset")
+        self._manufacturer = ""
+        self._model = ""
+        self._part_number = ""
+        self._serial_number = ""
+        self._build_date = ""
+
+    @dbus_property()
+    def Manufacturer(self) -> "s":
+        return self._manufacturer
+
+    @dbus_property()
+    def Model(self) -> "s":
+        return self._model
+
+    @dbus_property()
+    def PartNumber(self) -> "s":
+        return self._part_number
+
+    @dbus_property()
+    def SerialNumber(self) -> "s":
+        return self._serial_number
+
+    @dbus_property()
+    def BuildDate(self) -> "s":
+        return self._build_date
+
+    def update(self, manufacturer: str, model: str, part_number: str, serial_number: str, build_date: str) -> None:
+        changed = {}
+        for key, value in {
+            "_manufacturer": manufacturer,
+            "_model": model,
+            "_part_number": part_number,
+            "_serial_number": serial_number,
+            "_build_date": build_date,
+        }.items():
+            if getattr(self, key) != value:
+                setattr(self, key, value)
+                changed_key = "".join(part.capitalize() for part in key[1:].split("_"))
+                changed[changed_key] = value
+        if changed:
+            self.emit_properties_changed(changed)
+
+
+class StreamInterface(ServiceInterface):
+    def __init__(self, camera_service, camera_slug: str, stream_slug: str):
+        super().__init__("xyz.openbmc_project.IpCamera.Stream")
+        self._camera_service = camera_service
+        self._camera_slug = camera_slug
+        self._stream_slug = stream_slug
+        self._profile_token = ""
+        self._stream_name = ""
+        self._stream_url = ""
+        self._snapshot = False
+        self._profile_name = ""
+
+    @dbus_property()
+    def ProfileToken(self) -> "s":
+        return self._profile_token
+
+    @dbus_property()
+    def StreamName(self) -> "s":
+        return self._stream_name
+
+    @dbus_property()
+    def StreamUrl(self) -> "s":
+        return self._stream_url
+
+    @dbus_property()
+    def Snapshot(self) -> "b":
+        return self._snapshot
+
+    @dbus_property()
+    def ProfileName(self) -> "s":
+        return self._profile_name
+
+    def update(self, state: Dict[str, object]) -> None:
+        changed = {}
+        mapping = {
+            "_profile_token": str(state.get("profile_token", "")),
+            "_stream_name": str(state.get("stream_name", "")),
+            "_stream_url": str(state.get("stream_url", "")),
+            "_snapshot": bool(state.get("snapshot", False)),
+            "_profile_name": str(state.get("profile_name", "")),
+        }
+        for key, value in mapping.items():
+            if getattr(self, key) != value:
+                setattr(self, key, value)
+                changed_key = "".join(part.capitalize() for part in key[1:].split("_"))
+                changed[changed_key] = value
+        if changed:
+            self.emit_properties_changed(changed)
+
+    @method()
+    async def Import(self) -> None:
+        await self._camera_service.import_camera_stream(self._camera_slug, self._stream_slug)
+
+    @method()
+    async def Remove(self) -> None:
+        await self._camera_service.remove_camera_stream(self._camera_slug, self._stream_slug)
+
+
+class CameraInterface(ServiceInterface):
+    def __init__(self, camera_service, camera_slug: str):
+        super().__init__("xyz.openbmc_project.IpCamera.Device")
+        self._camera_service = camera_service
+        self._camera_slug = camera_slug
+        self._address = ""
+        self._endpoint = ""
+        self._name = ""
+        self._auth_status = "unknown"
+        self._managed = True
+        self._last_seen_usec = 0
+        self._last_refresh_usec = 0
+        self._last_error = ""
+        self._profiles = []
+        self._stream_names = []
+        self._snapshot_support = False
+        self._raw_info = ""
+        self._firmware_version = ""
+        self._hardware_id = ""
+
+    @dbus_property()
+    def Address(self) -> "s":
+        return self._address
+
+    @dbus_property()
+    def Endpoint(self) -> "s":
+        return self._endpoint
+
+    @dbus_property()
+    def Name(self) -> "s":
+        return self._name
+
+    @dbus_property()
+    def AuthStatus(self) -> "s":
+        return self._auth_status
+
+    @dbus_property()
+    def Managed(self) -> "b":
+        return self._managed
+
+    @dbus_property()
+    def LastSeenUsec(self) -> "t":
+        return self._last_seen_usec
+
+    @dbus_property()
+    def LastRefreshUsec(self) -> "t":
+        return self._last_refresh_usec
+
+    @dbus_property()
+    def LastError(self) -> "s":
+        return self._last_error
+
+    @dbus_property()
+    def Profiles(self) -> "ao":
+        return self._profiles
+
+    @dbus_property()
+    def StreamNames(self) -> "as":
+        return self._stream_names
+
+    @dbus_property()
+    def SnapshotSupport(self) -> "b":
+        return self._snapshot_support
+
+    @dbus_property()
+    def RawInfo(self) -> "s":
+        return self._raw_info
+
+    @dbus_property()
+    def FirmwareVersion(self) -> "s":
+        return self._firmware_version
+
+    @dbus_property()
+    def HardwareId(self) -> "s":
+        return self._hardware_id
+
+    def update(self, state: Dict[str, object], profile_paths: List[str]) -> None:
+        changed = {}
+        mapping = {
+            "_address": str(state.get("address", "")),
+            "_endpoint": str(state.get("endpoint", "")),
+            "_name": str(state.get("name", "")),
+            "_auth_status": str(state.get("auth_status", "unknown")),
+            "_managed": bool(state.get("managed", True)),
+            "_last_seen_usec": int(state.get("last_seen_usec", 0)),
+            "_last_refresh_usec": int(state.get("last_refresh_usec", 0)),
+            "_last_error": str(state.get("last_error", "")),
+            "_profiles": profile_paths,
+            "_stream_names": [str(item.get("stream_name", "")) for item in state.get("streams", {}).values()],
+            "_snapshot_support": bool(state.get("snapshot_support", False)),
+            "_raw_info": str(state.get("raw_info", "")),
+            "_firmware_version": str(state.get("firmware_version", "")),
+            "_hardware_id": str(state.get("hardware_id", "")),
+        }
+        for key, value in mapping.items():
+            if getattr(self, key) != value:
+                setattr(self, key, value)
+                changed_key = "".join(part.capitalize() for part in key[1:].split("_"))
+                changed[changed_key] = value
+        if changed:
+            self.emit_properties_changed(changed)
+
+    @method()
+    async def Refresh(self) -> None:
+        await self._camera_service.refresh_one(self._camera_slug, self._camera_service.auto_import_streams)
+
+    @method()
+    async def ImportStreams(self) -> None:
+        await self._camera_service.import_streams(self._camera_slug)
+
+    @method()
+    async def DeleteStreams(self) -> None:
+        await self._camera_service.delete_streams(self._camera_slug)
+
+    @method()
+    async def SetCredentials(self, username: "s", password: "s") -> None:
+        await self._camera_service.set_camera_credentials(self._camera_slug, username, password)
+
+
+class ManagerInterface(ServiceInterface):
+    def __init__(self, camera_service):
+        super().__init__("xyz.openbmc_project.IpCamera.Manager")
+        self._camera_service = camera_service
+        self._cameras = []
+        self._discovery_enabled = True
+        self._poll_interval_sec = 60
+
+    @dbus_property()
+    def Cameras(self) -> "ao":
+        return self._cameras
+
+    @dbus_property()
+    def DiscoveryEnabled(self) -> "b":
+        return self._discovery_enabled
+
+    @dbus_property()
+    def PollIntervalSec(self) -> "u":
+        return self._poll_interval_sec
+
+    def update(self, cameras: List[str], discovery_enabled: bool, poll_interval_sec: int) -> None:
+        changed = {}
+        if self._cameras != cameras:
+            self._cameras = cameras
+            changed["Cameras"] = cameras
+        if self._discovery_enabled != discovery_enabled:
+            self._discovery_enabled = discovery_enabled
+            changed["DiscoveryEnabled"] = discovery_enabled
+        if self._poll_interval_sec != poll_interval_sec:
+            self._poll_interval_sec = poll_interval_sec
+            changed["PollIntervalSec"] = poll_interval_sec
+        if changed:
+            self.emit_properties_changed(changed)
+
+    @method()
+    async def Discover(self) -> "ao":
+        await self._camera_service.discover_and_refresh()
+        return self._camera_service.camera_paths()
+
+    @method()
+    async def RefreshAll(self) -> None:
+        await self._camera_service.refresh_all()
+
+    @method()
+    async def AddCamera(self, address: "s", username: "s", password: "s", import_streams: "b") -> "o":
+        return await self._camera_service.add_camera(address, username, password, import_streams)
+
+    @method()
+    async def RemoveCamera(self, path: "o") -> None:
+        await self._camera_service.remove_camera_by_path(path)
+
+
+class CameraObject:
+    def __init__(self, service, slug: str, path: str):
+        self.service = service
+        self.slug = slug
+        self.path = path
+        self.inventory = InventoryItemInterface()
+        self.operational = OperationalStatusInterface()
+        self.asset = AssetInterface()
+        self.device = CameraInterface(service, slug)
+        self.streams: Dict[str, Dict[str, object]] = {}
+
+
+class CameraService:
+    def __init__(self, bus, config: Dict[str, object]):
+        self.bus = bus
+        self.config = config
+        self.state_path = Path(str(config.get("state_path", "/var/lib/dbus-ip-camera/state.json")))
+        self.inventory_root = str(config.get("inventory_root", "/xyz/openbmc_project/inventory/system/chassis/camera")).rstrip("/")
+        self.auto_add_discovered = bool(config.get("auto_add_discovered", True))
+        self.auto_import_streams = bool(config.get("auto_import_streams", True))
+        self.discovery_interval_sec = int(config.get("discovery_interval_sec", 300))
+        self.poll_interval_sec = int(config.get("poll_interval_sec", 60))
+        self.stream_prefix = str(config.get("stream_prefix", "ipcam"))
+        self._lock = asyncio.Lock()
+        self._periodic_task = None
+        state = load_json(self.state_path, {"cameras": {}})
+        self.state = {"cameras": state.get("cameras", {})}
+        self.manager = ManagerInterface(self)
+        self.camera_objects: Dict[str, CameraObject] = {}
+
+    async def start(self) -> None:
+        self.bus.export(MANAGER_PATH, self.manager)
+        for slug in list(self.state["cameras"].keys()):
+            self._export_camera(slug)
+            self._sync_camera_interfaces(slug)
+        self._sync_manager()
+        await self.discover_and_refresh()
+        self._periodic_task = asyncio.create_task(self._periodic_refresh_loop())
+
+    async def _periodic_refresh_loop(self) -> None:
+        while True:
+            try:
+                await self.discover_and_refresh()
+                await asyncio.sleep(self.discovery_interval_sec)
+            except asyncio.CancelledError:
+                raise
+            except Exception as error:  # noqa: BLE001
+                LOG.exception("Periodic refresh failed: %s", error)
+                await asyncio.sleep(self.poll_interval_sec)
+
+    def api_base(self) -> str:
+        return str(self.config.get("go2rtc_api", "http://127.0.0.1:1984")).rstrip("/")
+
+    async def request_json(self, path: str, query=None, method: str = "GET"):
+        return await asyncio.to_thread(self._request_json_sync, path, query, method)
+
+    def _request_json_sync(self, path: str, query=None, method: str = "GET"):
+        url = self.api_base() + "/" + path.lstrip("/")
+        if query:
+            url += "?" + urlencode(query, doseq=True)
+        request = Request(url, method=method)
+        with urlopen(request, timeout=10) as response:
+            return json.load(response)
+
+    async def request_sources(self, path: str, query=None):
+        try:
+            payload = await self.request_json(path, query=query)
+        except HTTPError as error:
+            if error.code == 404:
+                return []
+            raise
+
+        if isinstance(payload, dict):
+            return payload.get("sources", [])
+        return []
+
+    def camera_paths(self) -> List[str]:
+        return [self.camera_path(slug) for slug in sorted(self.state["cameras"].keys())]
+
+    def camera_path(self, slug: str) -> str:
+        return f"{self.inventory_root}/{slug}"
+
+    def stream_path(self, slug: str, stream_slug: str) -> str:
+        return f"{self.camera_path(slug)}/stream/{stream_slug}"
+
+    def _sync_manager(self) -> None:
+        self.manager.update(self.camera_paths(), self.auto_add_discovered, self.poll_interval_sec)
+
+    def _save_state(self) -> None:
+        atomic_write_json(self.state_path, self.state)
+
+    def _export_camera(self, slug: str) -> None:
+        if slug in self.camera_objects:
+            return
+        path = self.camera_path(slug)
+        obj = CameraObject(self, slug, path)
+        self.camera_objects[slug] = obj
+        self.bus.export(path, obj.inventory)
+        self.bus.export(path, obj.operational)
+        self.bus.export(path, obj.asset)
+        self.bus.export(path, obj.device)
+
+    def _unexport_camera(self, slug: str) -> None:
+        obj = self.camera_objects.pop(slug, None)
+        if not obj:
+            return
+        for stream_slug in list(obj.streams.keys()):
+            self.bus.unexport(self.stream_path(slug, stream_slug), obj.streams[stream_slug]["interface"])
+        self.bus.unexport(obj.path, obj.inventory)
+        self.bus.unexport(obj.path, obj.operational)
+        self.bus.unexport(obj.path, obj.asset)
+        self.bus.unexport(obj.path, obj.device)
+
+    def _sync_camera_interfaces(self, slug: str) -> None:
+        camera = self.state["cameras"][slug]
+        self._export_camera(slug)
+        obj = self.camera_objects[slug]
+
+        name = str(camera.get("name") or extract_address(str(camera.get("endpoint", ""))))
+        asset_parts = split_name(name)
+        manufacturer = str(camera.get("manufacturer") or asset_parts["manufacturer"])
+        model = str(camera.get("model") or asset_parts["model"])
+        obj.inventory.update(bool(camera.get("present", False)))
+        obj.operational.update(bool(camera.get("functional", False)))
+        obj.asset.update(
+            manufacturer,
+            model,
+            str(camera.get("hardware_id", "")),
+            str(camera.get("serial_number", "")),
+            str(camera.get("build_date", "")),
+        )
+
+        streams = camera.get("streams", {})
+        profile_paths = []
+        existing = set(obj.streams.keys())
+        desired = set(streams.keys())
+        for removed in existing - desired:
+            stream_state = obj.streams.pop(removed)
+            self.bus.unexport(self.stream_path(slug, removed), stream_state["interface"])
+        for stream_slug in sorted(desired):
+            path = self.stream_path(slug, stream_slug)
+            profile_paths.append(path)
+            if stream_slug not in obj.streams:
+                interface = StreamInterface(self, slug, stream_slug)
+                self.bus.export(path, interface)
+                obj.streams[stream_slug] = {"interface": interface}
+            obj.streams[stream_slug]["interface"].update(streams[stream_slug])
+
+        obj.device.update(camera, profile_paths)
+        self._sync_manager()
+
+    def _camera_credentials(self, camera: Dict[str, object]) -> List[tuple]:
+        credentials = []
+        username = str(camera.get("username", ""))
+        password = str(camera.get("password", ""))
+        if username or password:
+            credentials.append((username, password))
+        credentials.append((None, None))
+        return credentials
+
+    async def discover_and_refresh(self) -> None:
+        async with self._lock:
+            try:
+                discovered = await self.request_sources("api/onvif")
+            except (HTTPError, URLError) as error:
+                LOG.warning("Discovery failed: %s", error)
+                discovered = []
+
+            for item in discovered:
+                endpoint = strip_credentials(str(item.get("url", "")))
+                if not endpoint:
+                    continue
+                address = extract_address(endpoint)
+                slug = sanitize_fragment(address, "camera")
+                if slug not in self.state["cameras"] and not self.auto_add_discovered:
+                    continue
+                camera = self.state["cameras"].setdefault(slug, {"managed": True, "streams": {}})
+                camera["address"] = address
+                camera["endpoint"] = endpoint
+                camera["name"] = item.get("name", address)
+                camera["raw_info"] = item.get("info", "")
+                camera["location"] = item.get("location", "")
+                self._export_camera(slug)
+
+            for slug in list(self.state["cameras"].keys()):
+                await self._refresh_camera_locked(slug, self.auto_import_streams)
+
+            self._save_state()
+            for slug in list(self.state["cameras"].keys()):
+                self._sync_camera_interfaces(slug)
+
+    async def refresh_all(self) -> None:
+        async with self._lock:
+            for slug in list(self.state["cameras"].keys()):
+                await self._refresh_camera_locked(slug, self.auto_import_streams)
+            self._save_state()
+            for slug in list(self.state["cameras"].keys()):
+                self._sync_camera_interfaces(slug)
+
+    async def refresh_one(self, slug: str, import_streams: bool) -> None:
+        async with self._lock:
+            await self._refresh_camera_locked(slug, import_streams)
+            self._save_state()
+            self._sync_camera_interfaces(slug)
+
+    async def _refresh_camera_locked(self, slug: str, import_streams: bool) -> None:
+        camera = self.state["cameras"].get(slug)
+        if not camera:
+            raise ValueError(f"unknown camera {slug}")
+
+        endpoint = ensure_onvif_url(str(camera.get("endpoint") or camera.get("address") or ""))
+        camera["endpoint"] = strip_credentials(endpoint)
+        camera["address"] = extract_address(endpoint)
+        camera["last_refresh_usec"] = now_usec()
+
+        selected_url = None
+        profile_items = []
+        last_error = ""
+        for username, password in self._camera_credentials(camera):
+            candidate = build_url(urlparse(endpoint), username, password)
+            try:
+                profile_items = await self.request_sources("api/onvif", {"src": candidate})
+            except (HTTPError, URLError) as error:
+                last_error = str(error)
+                continue
+            if profile_items:
+                selected_url = candidate
+                break
+
+        if selected_url is None:
+            camera["present"] = False
+            camera["functional"] = False
+            camera["auth_status"] = "failed"
+            camera["last_error"] = last_error or "unable to enumerate profiles"
+            return
+
+        previous_streams = {
+            str(entry.get("stream_name", "")): str(entry.get("stream_url", ""))
+            for entry in camera.get("streams", {}).values()
+            if entry.get("stream_name")
+        }
+
+        new_streams = {}
+        snapshot_support = False
+        for index, profile in enumerate(profile_items):
+            profile_url = str(profile.get("url", ""))
+            if not profile_url:
+                continue
+            snapshot = "snapshot" in parse_qs(urlparse(profile_url).query)
+            snapshot_support = snapshot_support or snapshot
+            if snapshot:
+                continue
+            stream_name = make_stream_name(self.stream_prefix, profile_url, index)
+            stream_slug = sanitize_fragment(stream_name, f"stream_{index}")
+            profile_token = parse_qs(urlparse(profile_url).query).get("subtype", [str(index)])[0]
+            new_streams[stream_slug] = {
+                "profile_name": str(profile.get("name", "")),
+                "profile_token": profile_token,
+                "snapshot": False,
+                "stream_name": stream_name,
+                "stream_url": profile_url,
+            }
+
+        camera["streams"] = new_streams
+        camera["present"] = True
+        camera["functional"] = True
+        camera["auth_status"] = "ok"
+        camera["snapshot_support"] = snapshot_support
+        camera["last_seen_usec"] = now_usec()
+        camera["last_error"] = ""
+
+        if import_streams:
+            await self._reconcile_go2rtc_streams(previous_streams, new_streams)
+
+    async def _reconcile_go2rtc_streams(self, previous_streams: Dict[str, str], new_streams: Dict[str, Dict[str, object]]) -> None:
+        desired = {str(entry["stream_name"]): str(entry["stream_url"]) for entry in new_streams.values()}
+        for stale_name in sorted(set(previous_streams.keys()) - set(desired.keys())):
+            try:
+                await self.request_json("api/streams", {"src": stale_name}, method="DELETE")
+            except (HTTPError, URLError) as error:
+                LOG.warning("Failed deleting stale stream %s: %s", stale_name, error)
+        for name, source_url in desired.items():
+            try:
+                await self.request_json("api/streams", {"name": name, "src": source_url}, method="PUT")
+            except (HTTPError, URLError) as error:
+                LOG.warning("Failed importing stream %s: %s", name, error)
+
+    async def import_streams(self, slug: str) -> None:
+        async with self._lock:
+            camera = self.state["cameras"][slug]
+            await self._reconcile_go2rtc_streams({}, camera.get("streams", {}))
+
+    async def delete_streams(self, slug: str) -> None:
+        async with self._lock:
+            camera = self.state["cameras"][slug]
+            for stream in camera.get("streams", {}).values():
+                name = stream.get("stream_name")
+                if not name:
+                    continue
+                try:
+                    await self.request_json("api/streams", {"src": name}, method="DELETE")
+                except (HTTPError, URLError) as error:
+                    LOG.warning("Failed deleting stream %s: %s", name, error)
+
+    async def import_camera_stream(self, camera_slug: str, stream_slug: str) -> None:
+        async with self._lock:
+            stream = self.state["cameras"][camera_slug].get("streams", {}).get(stream_slug)
+            if not stream:
+                raise ValueError("unknown stream")
+            await self.request_json("api/streams", {"name": stream["stream_name"], "src": stream["stream_url"]}, method="PUT")
+
+    async def remove_camera_stream(self, camera_slug: str, stream_slug: str) -> None:
+        async with self._lock:
+            stream = self.state["cameras"][camera_slug].get("streams", {}).get(stream_slug)
+            if not stream:
+                raise ValueError("unknown stream")
+            await self.request_json("api/streams", {"src": stream["stream_name"]}, method="DELETE")
+
+    async def set_camera_credentials(self, slug: str, username: str, password: str) -> None:
+        async with self._lock:
+            camera = self.state["cameras"][slug]
+            camera["username"] = username
+            camera["password"] = password
+            await self._refresh_camera_locked(slug, self.auto_import_streams)
+            self._save_state()
+            self._sync_camera_interfaces(slug)
+
+    async def add_camera(self, address: str, username: str, password: str, import_streams: bool) -> str:
+        async with self._lock:
+            endpoint = ensure_onvif_url(address)
+            slug = sanitize_fragment(extract_address(endpoint), "camera")
+            camera = self.state["cameras"].setdefault(slug, {"managed": True, "streams": {}})
+            camera["address"] = extract_address(endpoint)
+            camera["endpoint"] = strip_credentials(endpoint)
+            camera["username"] = username
+            camera["password"] = password
+            camera["managed"] = True
+            if not camera.get("name"):
+                camera["name"] = camera["address"]
+            self._export_camera(slug)
+            await self._refresh_camera_locked(slug, import_streams)
+            self._save_state()
+            self._sync_camera_interfaces(slug)
+            return self.camera_path(slug)
+
+    async def remove_camera_by_path(self, path: str) -> None:
+        async with self._lock:
+            slug = None
+            for candidate in self.state["cameras"].keys():
+                if self.camera_path(candidate) == path:
+                    slug = candidate
+                    break
+            if slug is None:
+                raise ValueError(f"unknown camera path {path}")
+            camera = self.state["cameras"][slug]
+            for stream in camera.get("streams", {}).values():
+                name = stream.get("stream_name")
+                if not name:
+                    continue
+                try:
+                    await self.request_json("api/streams", {"src": name}, method="DELETE")
+                except (HTTPError, URLError) as error:
+                    LOG.warning("Failed deleting stream %s: %s", name, error)
+            self.state["cameras"].pop(slug, None)
+            self._unexport_camera(slug)
+            self._save_state()
+            self._sync_manager()
+
+
+async def main() -> int:
+    configure_logging()
+
+    config = load_json(Path(DEFAULT_CONFIG_PATH), {})
+    bus = await MessageBus(bus_type=BusType.SYSTEM).connect()
+    await bus.request_name(SERVICE_NAME)
+
+    camera_service = CameraService(bus, config)
+    await camera_service.start()
+
+    stop_event = asyncio.Event()
+    try:
+        loop = asyncio.get_running_loop()
+        loop.add_signal_handler(signal.SIGINT, stop_event.set)
+        loop.add_signal_handler(signal.SIGTERM, stop_event.set)
+    except (NotImplementedError, RuntimeError, ValueError):
+        pass
+
+    await stop_event.wait()
+    return 0
+
+
+if __name__ == "__main__":
+    try:
+        sys.exit(asyncio.run(main()))
+    except KeyboardInterrupt:
+        sys.exit(0)

@@ -1,0 +1,15 @@
+[Unit]
+Description=go2rtc streaming gateway
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+WorkingDirectory=/var/lib/go2rtc
+StateDirectory=go2rtc
+ExecStart=/usr/bin/go2rtc -config /etc/go2rtc/go2rtc.yaml
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target

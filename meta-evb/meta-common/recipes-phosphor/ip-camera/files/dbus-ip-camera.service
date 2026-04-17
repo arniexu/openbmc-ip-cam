@@ -1,0 +1,13 @@
+[Unit]
+Description=D-Bus IP camera manager
+After=network-online.target go2rtc.service
+Wants=network-online.target go2rtc.service
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/dbus-ip-camera
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target

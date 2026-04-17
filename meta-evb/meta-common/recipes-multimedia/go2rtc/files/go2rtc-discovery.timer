@@ -1,0 +1,11 @@
+[Unit]
+Description=Periodic ONVIF discovery for go2rtc
+
+[Timer]
+OnBootSec=45s
+OnUnitActiveSec=15min
+Persistent=true
+Unit=go2rtc-discovery.service
+
+[Install]
+WantedBy=timers.target

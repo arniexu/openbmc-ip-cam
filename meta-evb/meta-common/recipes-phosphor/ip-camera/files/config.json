@@ -1,0 +1,10 @@
+{
+  "go2rtc_api": "http://127.0.0.1:1984",
+  "discovery_interval_sec": 300,
+  "poll_interval_sec": 60,
+  "inventory_root": "/xyz/openbmc_project/inventory/system/chassis/camera",
+  "stream_prefix": "ipcam",
+  "auto_add_discovered": true,
+  "auto_import_streams": true,
+  "state_path": "/var/lib/dbus-ip-camera/state.json"
+}
