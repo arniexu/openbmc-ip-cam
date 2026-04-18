@@ -1,0 +1,10 @@
+[NetDev]
+Name=bond0
+Kind=bond
+Description=Unified uplink bond for ethernet, 4G and 5G
+
+[Bond]
+Mode=active-backup
+MIIMonitorSec=1s
+UpDelaySec=2s
+DownDelaySec=4s

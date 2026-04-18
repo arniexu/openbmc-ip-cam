@@ -1,0 +1,6 @@
+[Match]
+Name=wwan0
+
+[Network]
+Bond=bond0
+LinkLocalAddressing=no
