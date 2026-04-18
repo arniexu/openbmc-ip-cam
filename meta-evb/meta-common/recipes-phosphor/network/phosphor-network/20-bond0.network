@@ -1,0 +1,9 @@
+[Match]
+Name=bond0
+
+[Network]
+DHCP=yes
+IPv6AcceptRA=yes
+LinkLocalAddressing=ipv6
+LLMNR=false
+MulticastDNS=false

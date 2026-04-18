@@ -1,0 +1,40 @@
+name: IP Camera Design Alignment
+
+on:
+  pull_request:
+    paths:
+      - 'meta-evb/meta-common/recipes-phosphor/ip-camera/**'
+      - 'meta-evb/meta-common/recipes-multimedia/go2rtc/**'
+      - 'meta-evb/meta-common/recipes-phosphor/images/obmc-phosphor-image.bbappend'
+      - 'meta-evb/meta-common/conf/machine/include/evb-rpi-camera-common.inc'
+      - '.github/agents/OpenBMC IP-Camera Maintainer.agent.md'
+      - '.github/pull_request_template.md'
+      - 'scripts/ci/check_ip_camera_design_alignment.sh'
+  push:
+    branches:
+      - '**'
+    paths:
+      - 'meta-evb/meta-common/recipes-phosphor/ip-camera/**'
+      - 'meta-evb/meta-common/recipes-multimedia/go2rtc/**'
+      - 'meta-evb/meta-common/recipes-phosphor/images/obmc-phosphor-image.bbappend'
+      - 'meta-evb/meta-common/conf/machine/include/evb-rpi-camera-common.inc'
+      - '.github/agents/OpenBMC IP-Camera Maintainer.agent.md'
+      - '.github/pull_request_template.md'
+      - 'scripts/ci/check_ip_camera_design_alignment.sh'
+
+jobs:
+  design-alignment:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+
+      - name: Run IP-camera design alignment check
+        env:
+          BASE_REF: ${{ github.base_ref }}
+          PR_BODY: ${{ github.event.pull_request.body || '' }}
+        run: |
+          chmod +x scripts/ci/check_ip_camera_design_alignment.sh
+          scripts/ci/check_ip_camera_design_alignment.sh
