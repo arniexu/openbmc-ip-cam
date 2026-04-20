@@ -1,6 +1,162 @@
 WIC_CREATE_EXTRA_ARGS:append = " ${@'--no-fstab-update' if (d.getVar('CMDLINE_ROOT_PARTITION') or '').startswith('/dev/sd') else ''}"
 
 # Camera operations platform trim for Raspberry Pi targets.
+# Disable IPMI daemon stack (host ipmid + net ipmid/RMCP) for camera-only O&M.
+DISTRO_FEATURES:append = " phosphor-no-ipmi-rmcp"
+# Disable MCTP/PLDM stack completely.
+DISTRO_FEATURES:remove = " mctp pldm"
+
+# Also trim IPMI user-space utility tools.
+IMAGE_INSTALL:remove = " \
+	ipmitool \
+	freeipmi \
+	ipmiutil \
+	mctp \
+	pldm \
+	libmctp \
+	libpldm \
+	pldmtool \
+	smbios-mdr \
+	libpeci \
+	peci-pcie \
+	x86-power-control \
+	biosconfig-manager \
+	bios-bmc-smm-error-logger \
+	phosphor-software-manager-bios-software-update \
+	phosphor-software-manager-cpld-software-update \
+	phosphor-software-manager-i2cvr-software-update \
+	phosphor-power-regulators \
+	phosphor-power-systemd-links-regulators \
+	rasdaemon \
+	asd \
+	obmc-asd \
+	intel-asd \
+	pfr-manager \
+	obmc-console \
+	obmc-ikvm \
+	jsnbd \
+	nbd-client \
+	phosphor-pid-control \
+	phosphor-fan-control \
+	phosphor-fan-monitor \
+	phosphor-fan-presence-tach \
+	estoraged \
+	phosphor-nvme \
+	mdadm \
+	sgpio \
+	scsirastools \
+	scsirastools-raidmon \
+	nvme-cli \
+	libnvme \
+	ledmon \
+	phosphor-ecc \
+	edac-utils \
+	nvidia-gpu \
+	node-manager \
+	dcscm \
+	mtmitchell-dcscm \
+"
+BAD_RECOMMENDATIONS:append = " \
+	ipmitool \
+	freeipmi \
+	ipmiutil \
+	mctp \
+	pldm \
+	libmctp \
+	libpldm \
+	pldmtool \
+	smbios-mdr \
+	libpeci \
+	peci-pcie \
+	x86-power-control \
+	biosconfig-manager \
+	bios-bmc-smm-error-logger \
+	phosphor-software-manager-bios-software-update \
+	phosphor-software-manager-cpld-software-update \
+	phosphor-software-manager-i2cvr-software-update \
+	phosphor-power-regulators \
+	phosphor-power-systemd-links-regulators \
+	rasdaemon \
+	asd \
+	obmc-asd \
+	intel-asd \
+	pfr-manager \
+	obmc-console \
+	obmc-ikvm \
+	jsnbd \
+	nbd-client \
+	phosphor-pid-control \
+	phosphor-fan-control \
+	phosphor-fan-monitor \
+	phosphor-fan-presence-tach \
+	estoraged \
+	phosphor-nvme \
+	mdadm \
+	sgpio \
+	scsirastools \
+	scsirastools-raidmon \
+	nvme-cli \
+	libnvme \
+	ledmon \
+	phosphor-ecc \
+	edac-utils \
+	nvidia-gpu \
+	node-manager \
+	dcscm \
+	mtmitchell-dcscm \
+"
+
+# Hard-exclude all trimmed packages from final rootfs.
+PACKAGE_EXCLUDE:append = " \
+	ipmitool \
+	freeipmi \
+	ipmiutil \
+	mctp \
+	pldm \
+	libmctp \
+	libpldm \
+	pldmtool \
+	smbios-mdr \
+	libpeci \
+	peci-pcie \
+	x86-power-control \
+	biosconfig-manager \
+	bios-bmc-smm-error-logger \
+	phosphor-software-manager-bios-software-update \
+	phosphor-software-manager-cpld-software-update \
+	phosphor-software-manager-i2cvr-software-update \
+	phosphor-power-regulators \
+	phosphor-power-systemd-links-regulators \
+	rasdaemon \
+	asd \
+	obmc-asd \
+	intel-asd \
+	pfr-manager \
+	obmc-console \
+	obmc-ikvm \
+	jsnbd \
+	nbd-client \
+	phosphor-pid-control \
+	phosphor-fan-control \
+	phosphor-fan-monitor \
+	phosphor-fan-presence-tach \
+	estoraged \
+	phosphor-nvme \
+	mdadm \
+	sgpio \
+	scsirastools \
+	scsirastools-raidmon \
+	nvme-cli \
+	libnvme \
+	ledmon \
+	phosphor-ecc \
+	edac-utils \
+	nvidia-gpu \
+	node-manager \
+	dcscm \
+	mtmitchell-dcscm \
+"
+
 IMAGE_FEATURES:remove = " \
 	obmc-bmc-state-mgmt \
 	obmc-chassis-state-mgmt \
@@ -8,6 +164,7 @@ IMAGE_FEATURES:remove = " \
 	obmc-devtools \
 	obmc-dmtf-pmci \
 	obmc-fan-control \
+	obmc-fan-mgmt \
 	obmc-health-monitor \
 	obmc-host-ctl \
 	obmc-host-ipmi \
@@ -19,6 +176,7 @@ IMAGE_FEATURES:remove = " \
 	obmc-telemetry \
 	obmc-tpm \
 	obmc-user-mgmt \
+	obmc-net-ipmi \
 	obmc-user-mgmt-ldap \
 "
 
