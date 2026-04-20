@@ -1,3 +1,0 @@
-PACKAGECONFIG:append = " \
-    nvidia-gpu \
-"

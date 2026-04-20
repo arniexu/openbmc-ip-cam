@@ -11,6 +11,18 @@ IMAGE_INSTALL:remove = " \
 	ipmitool \
 	freeipmi \
 	ipmiutil \
+	ampere-ipmi-oem \
+	intel-ipmi-oem \
+	fb-ipmi-oem \
+	fii-ipmi-oem \
+	iei-ipmi-oem \
+	wistron-ipmi-oem \
+	phosphor-ipmi-blobs \
+	phosphor-ipmi-blobs-binarystore \
+	phosphor-ipmi-ethstats \
+	phosphor-ipmi-flash \
+	packagegroup-obmc-ipmid-providers-libs \
+	openpower-ipmi-oem-yaml-provider \
 	mctp \
 	pldm \
 	libmctp \
@@ -55,11 +67,26 @@ IMAGE_INSTALL:remove = " \
 	node-manager \
 	dcscm \
 	mtmitchell-dcscm \
+	rsyslog \
+	phosphor-rsyslog-config \
+	packagegroup-obmc-apps-remote-logging \
 "
 BAD_RECOMMENDATIONS:append = " \
 	ipmitool \
 	freeipmi \
 	ipmiutil \
+	ampere-ipmi-oem \
+	intel-ipmi-oem \
+	fb-ipmi-oem \
+	fii-ipmi-oem \
+	iei-ipmi-oem \
+	wistron-ipmi-oem \
+	phosphor-ipmi-blobs \
+	phosphor-ipmi-blobs-binarystore \
+	phosphor-ipmi-ethstats \
+	phosphor-ipmi-flash \
+	packagegroup-obmc-ipmid-providers-libs \
+	openpower-ipmi-oem-yaml-provider \
 	mctp \
 	pldm \
 	libmctp \
@@ -104,6 +131,9 @@ BAD_RECOMMENDATIONS:append = " \
 	node-manager \
 	dcscm \
 	mtmitchell-dcscm \
+	rsyslog \
+	phosphor-rsyslog-config \
+	packagegroup-obmc-apps-remote-logging \
 "
 
 # Hard-exclude all trimmed packages from final rootfs.
@@ -111,6 +141,18 @@ PACKAGE_EXCLUDE:append = " \
 	ipmitool \
 	freeipmi \
 	ipmiutil \
+	ampere-ipmi-oem \
+	intel-ipmi-oem \
+	fb-ipmi-oem \
+	fii-ipmi-oem \
+	iei-ipmi-oem \
+	wistron-ipmi-oem \
+	phosphor-ipmi-blobs \
+	phosphor-ipmi-blobs-binarystore \
+	phosphor-ipmi-ethstats \
+	phosphor-ipmi-flash \
+	packagegroup-obmc-ipmid-providers-libs \
+	openpower-ipmi-oem-yaml-provider \
 	mctp \
 	pldm \
 	libmctp \
@@ -155,6 +197,9 @@ PACKAGE_EXCLUDE:append = " \
 	node-manager \
 	dcscm \
 	mtmitchell-dcscm \
+	rsyslog \
+	phosphor-rsyslog-config \
+	packagegroup-obmc-apps-remote-logging \
 "
 
 IMAGE_FEATURES:remove = " \
