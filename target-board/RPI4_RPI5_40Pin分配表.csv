@@ -1,0 +1,24 @@
+PhysicalPin,BCM,Signal,Direction,Required,Notes
+1,3V3,3V3,Power,Yes,Logic power
+2,5V,5V,Power,Yes,Peripheral/driver power
+3,GPIO2,I2C1_SDA,Bidirectional,Yes,Main I2C bus
+4,5V,5V,Power,Yes,Peripheral/driver power
+5,GPIO3,I2C1_SCL,Output,Yes,Main I2C bus
+6,GND,GND,Power,Yes,Ground
+9,GND,GND,Power,Yes,Ground
+11,GPIO17,IOEXP_INT,Input,Yes,MCP23017 interrupt input
+13,GPIO27,ALARM_INT,Input,No,Optional alarm summary
+14,GND,GND,Power,Yes,Ground
+15,GPIO22,SYS_LED,Output,Yes,System status LED
+16,GPIO23,BUZZER_EN,Output,No,Optional buzzer control
+18,GPIO24,PWR_4G_EN,Output,No,Optional USB 4G power switch
+19,GPIO10,SPI0_MOSI,Output,No,Optional metering/ADC SPI
+20,GND,GND,Power,Yes,Ground
+21,GPIO9,SPI0_MISO,Input,No,Optional metering/ADC SPI
+22,GPIO25,FAN_FAULT,Input,No,Optional fan fault input
+23,GPIO11,SPI0_SCLK,Output,No,Optional metering/ADC SPI
+24,GPIO8,SPI0_CE0,Output,No,Optional metering/ADC chip select
+25,GND,GND,Power,Yes,Ground
+30,GND,GND,Power,Yes,Ground
+34,GND,GND,Power,Yes,Ground
+39,GND,GND,Power,Yes,Ground

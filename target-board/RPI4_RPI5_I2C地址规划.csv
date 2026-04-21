@@ -1,0 +1,7 @@
+Device,AddressHex,Function,Required,Notes
+MCP23017_1,0x20,Relay outputs,Yes,16-bit GPIO expander
+MCP23017_2,0x21,Digital inputs (INPUT/OPEN_DOOR/WATER),Yes,INT pin connected to GPIO17
+PCA9685,0x40,Fan PWM expansion,Yes,2 channels used initially
+AHT20,0x38,Temperature/Humidity,Yes,I2C sensor
+LIS3DH,0x18,Accelerometer,Yes,Alt address can be 0x19
+ADS1115,0x48,Analog acquisition,No,Optional analog channels
