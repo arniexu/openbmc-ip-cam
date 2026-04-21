@@ -1,16 +1,10 @@
 WIC_CREATE_EXTRA_ARGS:append = " ${@'--no-fstab-update' if (d.getVar('CMDLINE_ROOT_PARTITION') or '').startswith('/dev/sd') else ''}"
 
 # Camera operations platform trim for Raspberry Pi targets.
-# Disable IPMI daemon stack (host ipmid + net ipmid/RMCP) for camera-only O&M.
-DISTRO_FEATURES:append = " phosphor-no-ipmi-rmcp"
 # Disable MCTP/PLDM stack completely.
 DISTRO_FEATURES:remove = " mctp pldm"
 
-# Also trim IPMI user-space utility tools.
 IMAGE_INSTALL:remove = " \
-	ipmitool \
-	freeipmi \
-	ipmiutil \
 	ampere-ipmi-oem \
 	intel-ipmi-oem \
 	fb-ipmi-oem \
@@ -21,7 +15,6 @@ IMAGE_INSTALL:remove = " \
 	phosphor-ipmi-blobs-binarystore \
 	phosphor-ipmi-ethstats \
 	phosphor-ipmi-flash \
-	packagegroup-obmc-ipmid-providers-libs \
 	openpower-ipmi-oem-yaml-provider \
 	mctp \
 	pldm \
@@ -72,9 +65,6 @@ IMAGE_INSTALL:remove = " \
 	packagegroup-obmc-apps-remote-logging \
 "
 BAD_RECOMMENDATIONS:append = " \
-	ipmitool \
-	freeipmi \
-	ipmiutil \
 	ampere-ipmi-oem \
 	intel-ipmi-oem \
 	fb-ipmi-oem \
@@ -85,7 +75,6 @@ BAD_RECOMMENDATIONS:append = " \
 	phosphor-ipmi-blobs-binarystore \
 	phosphor-ipmi-ethstats \
 	phosphor-ipmi-flash \
-	packagegroup-obmc-ipmid-providers-libs \
 	openpower-ipmi-oem-yaml-provider \
 	mctp \
 	pldm \
@@ -138,9 +127,6 @@ BAD_RECOMMENDATIONS:append = " \
 
 # Hard-exclude all trimmed packages from final rootfs.
 PACKAGE_EXCLUDE:append = " \
-	ipmitool \
-	freeipmi \
-	ipmiutil \
 	ampere-ipmi-oem \
 	intel-ipmi-oem \
 	fb-ipmi-oem \
@@ -151,7 +137,6 @@ PACKAGE_EXCLUDE:append = " \
 	phosphor-ipmi-blobs-binarystore \
 	phosphor-ipmi-ethstats \
 	phosphor-ipmi-flash \
-	packagegroup-obmc-ipmid-providers-libs \
 	openpower-ipmi-oem-yaml-provider \
 	mctp \
 	pldm \
@@ -212,7 +197,6 @@ IMAGE_FEATURES:remove = " \
 	obmc-fan-mgmt \
 	obmc-health-monitor \
 	obmc-host-ctl \
-	obmc-host-ipmi \
 	obmc-host-state-mgmt \
 	obmc-ikvm \
 	obmc-inventory \
@@ -221,7 +205,6 @@ IMAGE_FEATURES:remove = " \
 	obmc-telemetry \
 	obmc-tpm \
 	obmc-user-mgmt \
-	obmc-net-ipmi \
 	obmc-user-mgmt-ldap \
 "
 
