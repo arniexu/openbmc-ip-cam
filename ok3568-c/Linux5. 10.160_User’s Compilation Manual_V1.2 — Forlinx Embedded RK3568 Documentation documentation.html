@@ -1,0 +1,838 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Linux5. 10.160_User’s Compilation Manual_V1.2 &mdash; Forlinx Embedded RK3568 Documentation  documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="_static/theme-switcher.css?v=a3c71d8a" />
+
+  
+    <link rel="shortcut icon" href="_static/forlinx.png"/>
+    <link rel="canonical" href="https://forlinxembedded.github.io/rockchip/ok3568-c/OK3568-C_Linux5_10_160_User_Compilation_Manual.html" />
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=5929fcd5"></script>
+      <script src="_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="_static/theme-switcher.js?v=950663c4"></script>
+      <script src="_static/logo-link.js?v=d4af6ba6"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Android11.0_User’s Manual_V2.2" href="OK3568-C_Android11_User_Manual.html" />
+    <link rel="prev" title="Linux5.10.160_User’s Manual_V2.3" href="OK3568-C_Linux5_10_160_User_Manual.html" />
+   
+
+  <!-- Load Font Awesome from CDN -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+  <!-- Google Analytics -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-N8EJPNL8NR"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-N8EJPNL8NR');
+  </script>
+
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html">
+            
+              <img src="_static/forlinx-logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">HARDWARE</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="OK3568-C_User_Hardware_Manual.html">User’s Hardware Manual_V3.3</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">SOFTWARE</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="OK3568-C_Linux5_10_160_User_Manual.html">Linux5.10.160_User’s Manual_V2.3</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Linux5. 10.160_User’s Compilation Manual_V1.2</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#copyright">Copyright</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#application-scope">Application Scope</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#revision-history">Revision History</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#overview">Overview</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#vmware-virtual-machine-software-installation">1. VMware Virtual Machine Software Installation</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#vmware-software-download-and-purchase">1.1 VMware Software Download and Purchase</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#vmware-software-installation">1.2 VMware Software Installation</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#loading-the-existing-ubuntu-development-environment">2. Loading the Existing Ubuntu Development Environment</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#new-ubuntu-development-environment-setup">3. New Ubuntu Development Environment Setup</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#ubuntu-system-setup">3.1 Ubuntu System Setup</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#ubuntu-virtual-machine-setup">3.1.1 Ubuntu Virtual Machine Setup</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#system-installation">3.1.2 System Installation</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#basic-ubuntu-installation">3.1.3 Basic Ubuntu Installation</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#ubuntu-network-settings">3.1.4 Ubuntu Network Settings</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#u-disk-loading">3.1.5 U Disk Loading</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#virtual-machine-basic-library-installation">3.1.6 Virtual Machine Basic Library Installation</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#installation-of-necessary-libraries-for-compiling-ok3568-linux-source-code">3.1.7 Installation of Necessary Libraries for Compiling OK3568 Linux Source Code</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#increasing-the-swap-partition">3.1.8 Increasing the Swap Partition</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#qt-creator-installation">3.2 Qt Creator Installation</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#related-code-compilation">4. Related Code Compilation</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#preparation-before-compilation">4.1. Preparation Before Compilation</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#environment-description">4.1.1 Environment Description</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#source-code-copy">4.1.2 Source Code Copy</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#kernel-compilation">4.2 Kernel Compilation</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#full-compilation-test">4.2.1 Full Compilation Test</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#individual-compilation-test">4.2.2 Individual Compilation Test</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#location-of-the-cross-compilation-toolchain">4.2.3 Location of the Cross - compilation Toolchain</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#image-file-usage">4.3 Image File Usage</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#qt-creator-environment-configuration">4.4. Qt Creator Environment Configuration</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#cross-compiler-configuration">4.4.1 Cross Compiler Configuration</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#qt-versions-configuration">4.4.2 Qt Versions Configuration</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#kits-configuration">4.4.3 Kits Configuration</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#application-compilation-and-operation">4.5 Application Compilation and Operation</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#command-line-application-compilation-and-operation">4.5.1 Command Line Application Compilation and Operation</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#qt-application-compilation-and-operation">4.5.2 QT Application Compilation and Operation</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="OK3568-C_Android11_User_Manual.html">Android11.0_User’s Manual_V2.2</a></li>
+<li class="toctree-l1"><a class="reference internal" href="OK3568-C_Android11_User_Compilation_Manual.html">Android11.0_User’s Compilation Manual_V2.0</a></li>
+<li class="toctree-l1"><a class="reference internal" href="OK3568-C_Forlinx_Desktop22_04_User_Manual.html">Forlinx Desktop 22.04_User’s Manual_V1.1</a></li>
+<li class="toctree-l1"><a class="reference internal" href="OK3568-C_Forlinx_Desktop22_04_User_Compilation_Manual.html">Forlinx Desktop 22.04_User’s Compilation Manual_V1.0</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">APPLICATION NOTE</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://forlinxembedded.github.io/rockchip/rk-development-manual/index.html">RK Development Manual</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Forlinx Embedded RK3568 Documentation</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Linux5. 10.160_User’s Compilation Manual_V1.2</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="linux5-10-160-users-compilation-manual-v1-2">
+<h1>Linux5. 10.160_User’s Compilation Manual_V1.2<a class="headerlink" href="#linux5-10-160-users-compilation-manual-v1-2" title="Link to this heading"></a></h1>
+<p>Document classification: □ Top secret □ Secret □ Internal information ■ Open</p>
+<section id="copyright">
+<h2>Copyright<a class="headerlink" href="#copyright" title="Link to this heading"></a></h2>
+<p>The copyright of this manual belongs to Baoding Folinx Embedded Technology Co., Ltd. Without the written permission of our company, no organizations or individuals have the right to copy, distribute, or reproduce any part of this manual in any form, and violators will be held legally responsible.</p>
+<p>Forlinx adheres to copyrights of all graphics and texts used in all publications in original or license-free forms.</p>
+<p>The drivers and utilities used for the components are subject to the copyrights of the respective manufacturers. The license conditions of the respective manufacturer are to be adhered to. Related license expenses for the operating system and applications should be calculated/declared separately by the related party or its representatives.</p>
+</section>
+<section id="application-scope">
+<h2>Application Scope<a class="headerlink" href="#application-scope" title="Link to this heading"></a></h2>
+<p>This manual is mainly applicable to the Linux5.10.160 operating system on the Forlinx OK3568-C platform. Other platforms can also refer to it, but there will be differences between different platforms. Please make modifications according to the actual conditions.</p>
+</section>
+<section id="revision-history">
+<h2>Revision History<a class="headerlink" href="#revision-history" title="Link to this heading"></a></h2>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head text-center"><p>Date</p></th>
+<th class="head text-center"><p>User Manual Version</p></th>
+<th class="head"><p>Revision History</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td class="text-center"><p>21/10/2023</p></td>
+<td class="text-center"><p>V1.0</p></td>
+<td><p>OK3568 User’s Compilation Manual (Version 1.0);<br /><strong>Note: This Compilation Manual is only applicable to the OK3568 development board.</strong></p></td>
+</tr>
+<tr class="row-odd"><td class="text-center"><p>11/12/2023</p></td>
+<td class="text-center"><p>V1.1</p></td>
+<td><p>Updating the instructions for compiling buildroot separately.</p></td>
+</tr>
+<tr class="row-even"><td class="text-center"><p>01/03/2024</p></td>
+<td class="text-center"><p>V1.2</p></td>
+<td><p>Fixing in-manual path problem</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="overview">
+<h2>Overview<a class="headerlink" href="#overview" title="Link to this heading"></a></h2>
+<p>This manual is designed to enable you to quickly understand the compilation process of the products and familiarize yourself with the compilation methods of Forlinx products. The application program needs to be cross-compiled on the Linux operating system before it can run on the development board. According to the method in the compilation manual, you can compile your own software code through practical operation.</p>
+<p>The manual will provide instructions for setting up the environment but there may be some unforeseen issues during the environment setup process. For beginners, it is recommended to use the pre-configured development environment provided by us. This will allow you to quickly get started and reduce development time.</p>
+<p>Linux systems are typically installed in three ways: dual system on a real machine, single system on a real machine, and virtual machine. Different installation methods have their advantages and disadvantages. This manual only provides methods to build ubuntu in a virtual machine. Computer hardware requirements: It is recommended to have at least 6GB of memory or more, so that you can allocate some memory to run the virtual machine (the virtual machine is recommended to have more than 2GB) and still do other operations on Windows, otherwise it will affect the performance of Windows.</p>
+<p>The manual is mainly divided into four chapters:</p>
+<ul class="simple">
+<li><p>Chapter 1. is mainly about the installation of VMware, and the version used is VMware Workstation 15 Pro15.1.0. You need to install VMware before using the ubuntu development environment;</p></li>
+<li><p>Chapter 2. mainly introduces the method of loading the ubuntu development environment provided by Forlinx, and the development environment is 64-bit ubuntu20.04;</p></li>
+<li><p>Chapter 3. mainly introduces the method of building a new ubuntu development environment; This section uses 64-bit Ubuntu 20.04 as an example to describe the creation of Ubuntu. Due to different computer configurations, there may be unexpected problems in the building process. It is recommended that beginners directly use the environment we have built.</p></li>
+<li><p>Chapter 4. mainly introduces the methods of compiling the source code related to the development board.</p></li>
+</ul>
+<p>A description of some of the symbols and formats associated with this manual:</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head text-center"><p><strong>Format</strong></p></th>
+<th class="head"><p><strong>Meaning</strong></p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td class="text-center"><p>Note</p></td>
+<td><p>Note or information that requires special attention, be sure to read carefully.</p></td>
+</tr>
+<tr class="row-odd"><td class="text-center"><p></p></td>
+<td><p>Relevant notes on the test chapters.</p></td>
+</tr>
+<tr class="row-even"><td class="text-center"><p>️</p></td>
+<td><p>Indicates the related path.</p></td>
+</tr>
+<tr class="row-odd"><td class="text-center"><p><font style="color:blue;">Blue font on gray background</font></p></td>
+<td><p><font style="color:#000000;">Refers to commands entered at the command line (Manual input required).</font></p></td>
+</tr>
+<tr class="row-even"><td class="text-center"><p><font style="color:black;">Black font</font></p></td>
+<td><p>Serial port output message after entering a command</p></td>
+</tr>
+<tr class="row-odd"><td class="text-center"><p><strong><font style="color:black;">Bold black</font></strong></p></td>
+<td><p><font style="color:#000000;">Key information in the serial port output message</font></p></td>
+</tr>
+<tr class="row-even"><td class="text-center"><p><font style="color:#000000;">//</font></p></td>
+<td><p><font style="color:#000000;">Interpretation of input instructions or output information</font></p></td>
+</tr>
+<tr class="row-odd"><td class="text-center"><p>Username&#64;Hostname</p></td>
+<td><p><font style="color:#000000;">root&#64;ok3568: development board serial port login account information,</font><br/><font style="color:#000000;">forlinx &#64; ok3568: development board network login account information</font><br/><font style="color:#000000;">forlinx &#64; Ubuntu: development environment Ubuntu account information</font><br/>You can determine the environment for function operation through this information.</p></td>
+</tr>
+</tbody>
+</table>
+<p><font style="color:#000000;">After packaging the file system, you can use the “ls” command to view the generated files.</font></p>
+<div class="highlight-markdown notranslate"><div class="highlight"><pre><span></span>forlinx@ubuntu:~/3568$ ls                              //List the files in this directory
+OK3568_Linux_fs  OK3568_Linux_fs.tar.bz2.00 OK3568_Linux_fs.tar.bz2.01 OK3568_Linux_fs.tar.bz2.02 OK3568_Linux_fs.tar.bz2.03
+</pre></div>
+</div>
+<ul class="simple">
+<li><p><font style="color:#000000;">forlinx&#64;ubuntu: the username is forlinx and the hostname is ubuntu, indicating that the operation is performed in the development environment ubuntu.</font></p></li>
+<li><p><font style="color:#000000;">// : Explanation of operation commands is required, but command input is not needed.</font></p></li>
+<li><p><font style="color:#0000FF;">ls:</font> <font style="color:#000000;">blue font on a gray background, indicating relevant commands that need to be entered manually.</font></p></li>
+<li><p><strong>OK3568_Linux_fs:</strong> The bottom black font represents the output information after entering the command, with the bold font indicating the key information, and the packed file system is here.</p></li>
+</ul>
+</section>
+<section id="vmware-virtual-machine-software-installation">
+<h2>1. VMware Virtual Machine Software Installation<a class="headerlink" href="#vmware-virtual-machine-software-installation" title="Link to this heading"></a></h2>
+<p>This chapter mainly introduces the installation of VMware virtual machines, using VMware Workstation 15 Pro v15.1.0 as an example to demonstrate the installation and configuration process of the operating system.</p>
+<section id="vmware-software-download-and-purchase">
+<h3>1.1 VMware Software Download and Purchase<a class="headerlink" href="#vmware-software-download-and-purchase" title="Link to this heading"></a></h3>
+<p>Go to the VMware website https://www.vmware.com/cn.html to download Workstation Pro and get the product key. VMware is a paid software, you need to buy it yourself, or use the trial version provided by VMware.</p>
+<p><img alt="Image" src="_images/1719278513268_e1e3d73c_ea58_4db6_86b2_2bcb430bf195.png" /></p>
+<p>After the download is complete, double-click the installation file to start the installation program.</p>
+</section>
+<section id="vmware-software-installation">
+<h3>1.2 VMware Software Installation<a class="headerlink" href="#vmware-software-installation" title="Link to this heading"></a></h3>
+<p>Double-click the startup program to enter the installation wizard.</p>
+<p><img alt="Image" src="_images/1719278513453_fcba4324_b61c_4700_a5a0_0dffae59dbbd.png" /></p>
+<p>Click on “Next”.</p>
+<p><img alt="Image" src="_images/1719278513616_4d573560_c60f_4f95_a2bf_7b0a38394f83.png" /></p>
+<p>Check the terms in the license agreement that I accept, then click “Next”.</p>
+<p><img alt="Image" src="_images/1719278513807_4fea4ba5_6c3f_4774_9046_4ac308ae7838.png" /></p>
+<p>Modify the installation location to the partition where you want to install the software on your computer, then click “Next”.</p>
+<p><img alt="Image" src="_images/1719278513983_81c57db7_35b1_4416_bb29_36120e02a747.png" /></p>
+<p>Check and click on “Next”.</p>
+<p><img alt="Image" src="_images/1719278514135_8b46b82c_621d_44fc_89d8_d33018b427f4.png" /></p>
+<p>Check the box to add a shortcut, then click “Next”.</p>
+<p><img alt="Image" src="_images/1719278514310_369d17b9_d01f_4d95_a676_04fb377558fd.png" /></p>
+<p>Click “Installation”.</p>
+<p><img alt="Image" src="_images/1719278514482_82865f12_b42f_4c32_aca1_30a96a2fa309.png" /></p>
+<p>Wait for the installation to complete.</p>
+<p><img alt="Image" src="_images/1719278514655_325d6ab7_c6cd_4de5_a879_6248cd24fcde.png" /></p>
+<p>Click “Finish” to try it out. If users need to use it for a long time, they need to buy it from the official and fill in the license.</p>
+</section>
+</section>
+<section id="loading-the-existing-ubuntu-development-environment">
+<h2>2. Loading the Existing Ubuntu Development Environment<a class="headerlink" href="#loading-the-existing-ubuntu-development-environment" title="Link to this heading"></a></h2>
+<p><strong>Note:</strong></p>
+<ul class="simple">
+<li><p><strong>It is recommended that beginners use the virtual machine environment built by Forlinx directly. After understanding this chapter, you can directly jump to the compilation chapter for further study;</strong></p></li>
+<li><p><strong>The development environment provided is: forlinx (username), forlinx (password).</strong></p></li>
+</ul>
+<p>There are two ways to use a virtual machine environment in VMware: one is to directly load an existing environment, and the other is to create a new environment. Let’s first talk about how to load an existing environment.</p>
+<p>First, download the development environment provided by Forlinx. In the development environment documentation, there should be an MD5 checksum file. After downloading the development environment, you should verify the integrity of the compressed package using the MD5 checksum. (You can use an on-line MD5 checksum tool or download a specific MD5 checksum tool for this purpose). To check if the checksum in the verification file matches the checksum of the file itself. If they match, the file download is successful. If they don’t match, it suggests that the file may be corrupt, and you should consider downloading it again.</p>
+<p>Select the zip file to unzip together</p>
+<p><img alt="Image" src="_images/1719278548687_41fb4543_911d_4ce3_9b88_09f7fb114c011.png" /></p>
+<p>Select .vmx as the file to be opened by the virtual machine after the complete decompression.</p>
+<p>Open the virtual machine and select the extracted 3588 development environment.vmx</p>
+<p><img alt="Image" src="_images/1719278548894_5a126d86_d30f_4f1c_906b_1d615fdf2e0a1.png" /></p>
+<p>Turn on this virtual machine after loading is complete to run it and enter the system’s interface.</p>
+<p><img alt="Image" src="_images/1719278549304_2128d94e_45fa_4091_83c8_678157602b7b1.png" /></p>
+<p>Development environment account no.: forlinx, password: forlinx; after filling in, select Sign in to log in.</p>
+<p><img alt="Image" src="_images/1719278549464_41fc41e5_d024_4e97_a993_d6b193bc8aae1.png" /></p>
+<p><img alt="Image" src="_images/1719278549733_cae28152_e433_4a1e_90ab_8a2479049af51.png" /></p>
+</section>
+<section id="new-ubuntu-development-environment-setup">
+<h2>3. New Ubuntu Development Environment Setup<a class="headerlink" href="#new-ubuntu-development-environment-setup" title="Link to this heading"></a></h2>
+<p><strong>Note: Beginners are not recommended to build the system by themselves. It is suggested to use the existing virtual machine environment. If you do not need to build the environment, you can skip this section. This section mainly explains the process of building the ubuntu system.</strong></p>
+<section id="ubuntu-system-setup">
+<h3>3.1 Ubuntu System Setup<a class="headerlink" href="#ubuntu-system-setup" title="Link to this heading"></a></h3>
+<section id="ubuntu-virtual-machine-setup">
+<h4>3.1.1 Ubuntu Virtual Machine Setup<a class="headerlink" href="#ubuntu-virtual-machine-setup" title="Link to this heading"></a></h4>
+<p>Open the VMware software, click on create a new virtual machine. Enter the following interface.</p>
+<p><img alt="Image" src="_images/1719278531825_28237039_37c8_4a5f_8597_f64b71e7e3121.png" /></p>
+<p>Choose custom, and click “Next”.</p>
+<p><img alt="Image" src="_images/1719278532008_920d71ea_3371_425c_9b27_a15b1789fdf91.png" /></p>
+<p>Select the compatibility with the corresponding version of VMware, which can be found in Help-&gt;About VMware Workstation, and click “Next”.</p>
+<p><img alt="Image" src="_images/1719278532173_48b35578_2a3d_4aff_9888_513f9b66eaaf1.png" /></p>
+<p>Select Install the operating system later and click “Next”.</p>
+<p><img alt="Image" src="_images/1719278532371_cd7442c7_21c1_4c8a_8463_24ea3de5f6c11.png" /></p>
+<p>Leave the default and click “Next”.</p>
+<p><img alt="Image" src="_images/1719278532534_39687568_6ee3_4284_b373_2104df01f0fb1.png" /></p>
+<p>Modify the virtual machine name and installation location, click “Next”.</p>
+<p><img alt="Image" src="_images/1719278532718_2cd2ea2a_0f97_46d5_ad8b_4f004e889a201.png" /></p>
+<p>Set the number of processors as appropriate.</p>
+<p><img alt="Image" src="_images/1719278532900_dd3f7357_07c5_4dc4_9fd1_7d367c7a71111.png" /></p>
+<p>Set the memory size according to the actual situation. It is recommended to use 16g</p>
+<p><img alt="Image" src="_images/1719278533112_8f49bb5a_64b5_47df_8798_044888bfa83b1.png" /></p>
+<p>Set the network type, the default is NAT mode, click Next. Keep the default values for the remaining steps until you reach the step to specify the disk capacity.</p>
+<p><img alt="Image" src="_images/1719278533381_8dc68236_561d_4840_abb7_3512def5cecf1.png" /></p>
+<p>The default selection for the IO controller type here is LSI.</p>
+<p><img alt="Image" src="_images/1719278533635_d54cda44_50e2_4643_b3d3_54dc41a1bfa61.png" /></p>
+<p>The default selection here is also SCSI.</p>
+<p><img alt="Image" src="_images/1719278533807_86b2d601_916f_4f7d_b7c0_4a672e97d6591.png" /></p>
+<p>Choose to create a new virtual disk here.</p>
+<p><img alt="Image" src="_images/1719278534036_c400a9dc_bdac_4dde_bd52_d4e721fb4ccd1.png" /></p>
+<p>Set the disk size to 200 gigabytes and select the form in which the disk exists, then click “Next” to finish.</p>
+<p><img alt="Image" src="_images/1719278534210_b2fc7391_1c76_4148_80c8_855cd91746981.png" /></p>
+<p>Specify the disk file, the default one here is fine.</p>
+<p><img alt="Image" src="_images/1719278534358_9585162d_5c54_42eb_be37_f9361aebf91d1.png" /></p>
+<p>Click “Finish” by default.</p>
+<p><img alt="Image" src="_images/1719278534538_0cb90337_6bc8_4fc5_8009_267ab1d2617c.png" /></p>
+<p>The virtual machine creation is now complete.</p>
+<p>In the next section, we will introduce the installation of Ubuntu system in the virtual machine, which is similar to the installation method in the real machine. Here we describe the method of installing Ubuntu system in a virtual machine.</p>
+</section>
+<section id="system-installation">
+<h4>3.1.2 System Installation<a class="headerlink" href="#system-installation" title="Link to this heading"></a></h4>
+<p>The version of Ubuntu to install is 20.04. First of all, go to the official website of Ubuntu to get the Ubuntu 20.04 64-bit image. The download address is “ubuntu-20.04.6-desktop-amd64.iso” version.</p>
+<p><img alt="Image" src="_images/1719278534726_3aa57e5a_99a5_4638_a835_5b80b82fc03d.png" /></p>
+<p>Right-click on the newly created Ubuntu 64-bit and select Settings from the pop-up menu.</p>
+<p><img alt="Image" src="_images/1719278534926_94943ef2_c4d9_4ddd_91e9_50c5088dfacc.png" /></p>
+<p>The “Virtual Machine Settings Menu” pops up as shown below:</p>
+<p><img alt="Image" src="_images/1719278535121_beaef4c9_b729_4a86_8299_02e28a716d2d.png" /></p>
+<p>Click on CD/DVD (SATA), select “Use ISO image file,” browse and choose the previously downloaded Ubuntu image, then click “OK” to confirm.</p>
+<p><img alt="Image" src="_images/1719278535409_a8fcb60d_f0a2_428c_8be7_0e124dcbc137.png" /></p>
+<p>After setting up the image, ensure that the network is available. Then, start the virtual machine and proceed with the installation of the Ubuntu image.</p>
+<p><img alt="Image" src="_images/1719278535587_6fcfdee5_51f1_4e1c_9906_d39fc00487111.png" /></p>
+<p>After starting the virtual machine, wait for the installation interface to appear as shown below.</p>
+<p><img alt="Image" src="_images/1719278535793_fd516f0e_e8ab_4dee_9119_5ad4232b0450.png" /></p>
+<p>After selecting the language on the left side as shown in the image, click “Install Ubuntu”, and the language selection interface will pop up. Ubuntu default language is English, of course, you can also choose others, the default choice of language in the later stage can also be reset,after selection then click continue.</p>
+<p><img alt="Image" src="_images/1719278536000_eb047135_c38a_4252_8c28_ab4160903086.png" /></p>
+<p>Next, by default, select continue to finish the installation, the installation process will be very slow, then click “continue”:</p>
+<p><img alt="Image" src="_images/1719278536210_5beb2cde_35d4_44aa_b6b6_4e9c8e760b06.png" /></p>
+<p>Next, select continue by default to continue the installation, the installation process will be very slow, and then click “continue”:</p>
+<p><img alt="Image" src="_images/1719278536401_c42c25c7_6384_4061_a7e2_76c6349c64be.png" /></p>
+<p><img alt="Image" src="_images/1719278536688_120370eb_2370_46c6_805f_a2041fe0149c.png" /></p>
+<p>Next, select the timezone. You can either click on the Shanghai timezone or enter “Shanghai” (or choose the appropriate timezone based on your location). Then, click “Continue” to proceed. Finally, set your username and password and click “continue” to automatically install the program:</p>
+<p><img alt="Image" src="_images/1719278537143_ccb45ffe_9c1d_42e6_a4ae_0da143112cbf.png" /></p>
+<p>The installation process is shown in the figure below, you can skip it if the network is bad, it will not affect the installation.</p>
+<p><img alt="Image" src="_images/1719278537449_a7f018e6_bdb2_4867_9e95_42fa1c7d2cb1.png" /></p>
+<p>After the installation, click “Restart Now” to reboot (or click “Reboot Client”):</p>
+<p><img alt="Image" src="_images/1719278537830_e34fbcf1_8a51_4008_af9d_7f58d0899130.png" /></p>
+<p><img alt="Image" src="_images/1719278538153_32d91128_59b7_4c50_9745_84b3186f5a51.png" /></p>
+<p>The system interface after the reboot is complete as shown below:</p>
+<p><img alt="Image" src="_images/1719278538378_ec2e5454_98ce_4802_820d_82c55f5ae9a8.png" /></p>
+</section>
+<section id="basic-ubuntu-installation">
+<h4>3.1.3 Basic Ubuntu Installation<a class="headerlink" href="#basic-ubuntu-installation" title="Link to this heading"></a></h4>
+<p>After installing the Ubuntu20.04 operating system, there are a few configurations to make.</p>
+<ul class="simple">
+<li><p><strong>VMware Tools Installation:</strong></p></li>
+</ul>
+<p>Next, install VMware Tools. Without installing this tool, you won’t be able to copy and paste and drag file between the Windows host and the virtual machine. First click on “Virtual Machines” on the VMware navigation bar, then click “Install VMware Tools” in the drop-down box.</p>
+<p><img alt="Image" src="_images/1719278538688_9700b495_f48a_4190_9391_8d970fdb36ec.png" /></p>
+<p>Once done, enter Ubuntu and the VMware Tools CD icon will appear on your desktop, click into it:</p>
+<p><img alt="Image" src="_images/1719278538895_1625dbb7_305b_4f49_ac94_850a3b19510e.png" /></p>
+<p>Double-click on the VMwareTools icon, go to it and see a zip file VMwareTools-10.3.10-12406962.tar.gz (it may be different for different VM versions).</p>
+<p><img alt="Image" src="_images/1719278539134_a41b7a36_aa5c_4523_a560_8cfce32569f6.png" /></p>
+<p>Copy the file under the home directory (i.e., the directory of the home personal username):</p>
+<p><img alt="Image" src="_images/1719278539323_74442df4_84e4_492a_8633_8ed6f333949c.png" /></p>
+<p><img alt="Image" src="_images/1719278539510_050c7a0a_ec54_4cd5_85a1_9f5e81e426fa.png" /></p>
+<p>Press the keyboard [Ctrl+Alt+T] to bring up the terminal command interface, use the tar command to unzip the VMwareTools installation package (using the sudo command will prompt you to enter the password, follow the prompt to enter the password and press Enter, Linux system password input has no echo, make sure the password is correct and press Enter to confirm):</p>
+<div class="highlight-plain notranslate"><div class="highlight"><pre><span></span>forlinx@ubuntu:~$ sudo tar -xvf VMwareTools-10.3.10-12406962.tar.gz 
+[sudo] password for forlinx:
+</pre></div>
+</div>
+<p>After executing the extract command, use ls to view the file directory vmware-tools-distrib, and go to the directory</p>
+<div class="highlight-plain notranslate"><div class="highlight"><pre><span></span>forlinx@ubuntu:~$ ls
+Desktop   examples.desktop   nfs   snap   tftp   VMwareTools-10.3.10-12406962.tar.gz  vmware-tools-distrib   work
+forlinx@ubuntu:~$ cd vmware-tools-distrib/	  //Use the CD command to enter the directory
+forlinx@ubuntu:~/vmware-tools-distrib$ ls             //View the files in this directory
+bin   caf   doc   etc   FILES   INSTALL   installer   lib   vgauth   vmware-install.pl
+</pre></div>
+</div>
+<p>In the current directory, enter sudo ./vmware-install.pl to install, enter the password after pressing Enter, and then start the installation. When you encounter [yes]/[no], enter yes, and press Enter for the rest to install by default.</p>
+<div class="highlight-plain notranslate"><div class="highlight"><pre><span></span>forlinx@ubuntu:~/vmware-tools-distrib$ sudo ./vmware-install.pl
+[sudo] password for forlinx: 		     //Enter the password of the forlinx account, no display, cannot see the input content
+</pre></div>
+</div>
+<p>The installation process information is long, here omitted.</p>
+<div class="highlight-plain notranslate"><div class="highlight"><pre><span></span>open-vm-tools packages are available from the OS vendor and VMware recommends 
+using open-vm-tools packages. See http://kb.vmware.com/kb/2073803 for more 
+information.
+Do you still want to proceed with this installation? [no] yes			//Enter yes
+... ...		
+</pre></div>
+</div>
+<p>After completing the VMware tools tool, you can achieve file copy and paste, virtual machine adaptive full display and other functions between Windows and Ubuntu. If the virtual machine cannot be displayed in full screen, you can click View, select Auto-resize Guest Display, and click Fit Guest Now to achieve the virtual machine. VMware tools installation is successful.</p>
+<p><img alt="Image" src="_images/1719278539710_8c366a71_823a_4180_8309_32189be7ce07.png" /></p>
+<ul class="simple">
+<li><p><strong>Basic Settings:</strong></p></li>
+</ul>
+<p>Make most of the system settings in the location shown below. A lot of the setup requirements on Ubuntu can be done here.</p>
+<p><img alt="Image" src="_images/1719278539972_31f94d63_6f34_4904_846e_cd72975c7e99.png" /></p>
+</section>
+<section id="ubuntu-network-settings">
+<h4>3.1.4 Ubuntu Network Settings<a class="headerlink" href="#ubuntu-network-settings" title="Link to this heading"></a></h4>
+<ul class="simple">
+<li><p><strong>NAT Mode</strong></p></li>
+</ul>
+<p>Before using the network, make sure that our virtual machine can connect to the Internet, open the virtual machine settings, and change the network bridge mode in the network adapter to “NAT mode”:</p>
+<p><img alt="Image" src="_images/1719278540173_d56c3ec8_1d83_49da_99f7_6bbd9a9b6830.png" /></p>
+<p>When the VMware virtual NIC is set to NAT mode in a virtual machine, the network in the Ubuntu environment can be set to dynamic IP. The virtual NAT device and the host NIC are connected to communicate for Internet access in this mode. This is the most common way for our VM to get on the extranet.</p>
+<p><img alt="Image" src="_images/1.png" /></p>
+<p>The network is set to dynamic ip.</p>
+<p><img alt="Image" src="_images/1719278540815_009829ab_476a_45b8_b02e_d7f42bfbe34f.png" /></p>
+<ul class="simple">
+<li><p><strong>Bridge Mode:</strong></p></li>
+</ul>
+<p>If TFTP, SFTP and other servers are used, the network contact mode of the virtual machine needs to be set as the bridge mode. When the VMware virtual NIC is set to bridge mode, the host NIC and the VM NIC communicate via a virtual bridge, which requires the Ubuntu IP to be set to the same network segment as the host IP.</p>
+<p><img alt="Image" src="_images/1719278541083_4d9634db_a591_45be_ad82_f0c7b1e12e3e.png" /></p>
+<p><img alt="Image" src="_images/1719278539972_31f94d63_6f34_4904_846e_cd72975c7e99.png" /></p>
+<p>Set the static IP. At this time, the Ubuntu IP and the host IP should be set in the same network segment.</p>
+<p><img alt="Image" src="_images/1.png" /></p>
+<p><img alt="Image" src="_images/1719278540815_009829ab_476a_45b8_b02e_d7f42bfbe34f.png" /></p>
+<p><strong>Note: The IP and DNS involved in the network settings section should be set according to the user’s own actual environment, the manual is an example.</strong></p>
+</section>
+<section id="u-disk-loading">
+<h4>3.1.5 U Disk Loading<a class="headerlink" href="#u-disk-loading" title="Link to this heading"></a></h4>
+<p>Open VM Settings, USB Controller, select USB 3.0 in Compatibility and “OK”. As shown in the picture below, since most computers nowadays support USB3.0 ports, if we don’t set it up, when we plug in the USB3.0 port, we can’t connect to the virtual machine. The principle is as follows:</p>
+<p><img alt="Image" src="_images/1719278541851_33d6ec29_11c4_499b_867c_528314eef0ca.png" /></p>
+<p>After the virtual machine boot, insert the U disk, the virtual machine will be more in the lower right corner of the icon similar to the “U disk”, right-click –&gt; connect, and then you can see in the file system to see more than a directory, that the U disk loaded successfully, as shown in the figure:</p>
+<p><img alt="Image" src="_images/1719278542123_ad4e8176_1557_40a0_b545_a4aa290b16d2.png" /></p>
+<p><img alt="Image" src="_images/1719278542337_c0fe4886_515f_4fe1_9446_22882a83577e.png" /></p>
+</section>
+<section id="virtual-machine-basic-library-installation">
+<h4>3.1.6 Virtual Machine Basic Library Installation<a class="headerlink" href="#virtual-machine-basic-library-installation" title="Link to this heading"></a></h4>
+<p>Before development, there are some other necessary libraries, we use the following commands to install them one by one, before installation, you need to ensure that the network can be used normally, you can get on the extranet:</p>
+<div class="highlight-plain notranslate"><div class="highlight"><pre><span></span>forlinx@ubuntu:~$ sudo apt-get update                             // Update the information of the download sources
+forlinx@ubuntu:~$ sudo apt-get install build-essential            // Provide the list information of software packages necessary for compiling programs
+forlinx@ubuntu:~$ sudo apt-get install libncurses*                // Used to generate text-based user interfaces
+forlinx@ubuntu:~$ sudo apt-get install lzop                       // A compression and decompression tool based on the Lzo library
+forlinx@ubuntu:~$ sudo apt-get install net-tools                  // Network configuration tools
+</pre></div>
+</div>
+</section>
+<section id="installation-of-necessary-libraries-for-compiling-ok3568-linux-source-code">
+<h4>3.1.7 Installation of Necessary Libraries for Compiling OK3568 Linux Source Code<a class="headerlink" href="#installation-of-necessary-libraries-for-compiling-ok3568-linux-source-code" title="Link to this heading"></a></h4>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>forlinx@ubuntu:~$<span class="w"> </span>sudo<span class="w"> </span>apt-get<span class="w"> </span>update<span class="w">                   </span>//Update<span class="w"> </span>apt-get<span class="w"> </span>download<span class="w"> </span>sources
+forlinx@ubuntu:~$<span class="w"> </span>sudo<span class="w"> </span>apt-get<span class="w"> </span>install<span class="w"> </span>openssh-server<span class="w"> </span>vim<span class="w"> </span>git<span class="w"> </span>fakeroot<span class="w">        </span>//Necessary<span class="w"> </span>toolkit<span class="w"> </span>installation
+forlinx@ubuntu:~$<span class="w"> </span>sudo<span class="w"> </span>apt-get<span class="w"> </span>install<span class="w"> </span>repo<span class="w"> </span>git<span class="w"> </span>ssh<span class="w"> </span>make<span class="w"> </span>gcc<span class="w"> </span>libssl-dev<span class="w"> </span>liblz4-tool
+expect<span class="w"> </span>g++<span class="w"> </span>patchelf<span class="w"> </span>chrpath<span class="w"> </span>gawk<span class="w"> </span>texinfo<span class="w"> </span>chrpath<span class="w"> </span>diffstat<span class="w"> </span>binfmt-support<span class="w"> </span>qemu-user-static
+live-build<span class="w"> </span>bison<span class="w"> </span>flex<span class="w"> </span>fakeroot<span class="w"> </span>cmake<span class="w"> </span>gcc-multilib<span class="w"> </span>g++-multilib<span class="w"> </span>unzip<span class="w"> </span>device-tree-compiler<span class="w"> </span>python-pip<span class="w"> </span>libncurses5-dev
+forlinx@ubuntu:~$<span class="w"> </span>sudo<span class="w"> </span>apt-get<span class="w"> </span>install<span class="w"> </span>libgmp-dev<span class="w">  </span>libmpc-dev<span class="w"> </span>libicu-dev<span class="w"> </span>bsdmainutils
+</pre></div>
+</div>
+<p>These library files are the ones that need to be downloaded when compiling the Linux source code by building the 3568 Linux compilation environment by yourself. If you are not building the OK3568 Linux development environment, you can skip this step.</p>
+</section>
+<section id="increasing-the-swap-partition">
+<h4>3.1.8 Increasing the Swap Partition<a class="headerlink" href="#increasing-the-swap-partition" title="Link to this heading"></a></h4>
+<p>Please confirm swap partition size of the current system. If the swap partition is insufficient, the compilation of the source code will fail. 16G is recommended. It is recommended to adjust the development environment memory to 16G.</p>
+<p>1. Confirm the swap partition：</p>
+<div class="highlight-plain notranslate"><div class="highlight"><pre><span></span>forlinx@ubuntu:~$ cat /proc/swaps
+</pre></div>
+</div>
+<p>The virtual machine provided by Forlinx has been configured with the swap partition by default. If you use other virtual machines, you can increase the size of the swap partition by creating a swap file:</p>
+<div class="highlight-plain notranslate"><div class="highlight"><pre><span></span>forlinx@ubuntu:~$ sudo swapoff /swapfile
+forlinx@ubuntu:~$ sudo fallocate -l 10G /swapfile
+forlinx@ubuntu:~$ sudo chmod 600 /swapfile
+forlinx@ubuntu:~$ sudo mkswap /swapfile
+forlinx@ubuntu:~$ sudo swapon /swapfile
+forlinx@ubuntu:~$ sudo vim /etc/fstab
+</pre></div>
+</div>
+<p>Adding the following at the end of the/etc/fstab file:</p>
+<div class="highlight-plain notranslate"><div class="highlight"><pre><span></span>forlinx@ubuntu:~$ /swapfile none swap sw 0 0
+</pre></div>
+</div>
+<p>2. It is recommended to adjust the memory of the development environment to 16g. Low memory may cause the compilation to fail.</p>
+</section>
+</section>
+<section id="qt-creator-installation">
+<h3>3.2 Qt Creator Installation<a class="headerlink" href="#qt-creator-installation" title="Link to this heading"></a></h3>
+<p>Copy qt-creator-opensource-linux-x86_64-4.7.0.run to any directory within the current user’s home directory, and then run the following command.</p>
+<ul class="simple">
+<li><p>Path: OK3568-C（Linux）User’s Manual\Linux\source code \qt-creator-opensource-linux-x86_64-4.7.0.run</p></li>
+</ul>
+<div class="highlight-plain notranslate"><div class="highlight"><pre><span></span>forlinx@ubuntu:~$ ./qt-creator-opensource-linux-x86_64-4.7.0.run                   
+</pre></div>
+</div>
+<p><img alt="Image" src="_images/1719278542788_a08554d9_9ff7_485a_a499_6a5b274fd48f.png" /></p>
+<p>Then the installation window of the graphical interface will pop up, and install according to the instructions:</p>
+<p><img alt="Image" src="_images/1719278542977_d1772186_fa60_442a_8cf2_6e5cffefaae2.png" /></p>
+<p><img alt="Image" src="_images/1719278543199_cbc234c5_2d49_43aa_864e_4daf0abe7a4c.png" /></p>
+<p><img alt="Image" src="_images/1719278543608_c9d367f7_56c3_44b6_829c_04f29286f63d.png" /></p>
+<p><img alt="Image" src="_images/1719278543389_eaacabb8_9343_4e45_8626_9a68c043e0a0.png" /></p>
+<p>Users who install online need to register their own Qt account. Those who already have a Qt account can log in directly. Qt password requirements are: including capital letters, lowercase letters and numbers. After successful registration and login, click next.</p>
+<p>Users who install offline can skip it.</p>
+<p><img alt="Image" src="_images/1719278543830_11d43ecf_8d67_4bd0_a472_fc52383a77b1.png" /></p>
+<p>Click “Next”.</p>
+<p><img alt="Image" src="_images/1719278544047_02ae511b_f6df_49fc_94ad_50606afa9ac1.png" /></p>
+<p>Users can set the installation path according to their own habits. It is set by default here, so click “Next”.</p>
+<p><img alt="Image" src="_images/1719278544274_25984f38_7e0d_4029_97ec_25fc13e82651.png" /></p>
+<p>To fully install, click “Next”.</p>
+<p><img alt="Image" src="_images/1719278544480_43ea98bb_67e7_4632_a1cf_b917e22a17eb.png" /></p>
+<p><img alt="Image" src="_images/1719278544690_a23e2f5f_b76b_46c9_8ebc_ef0ddc395677.png" /></p>
+<p>Click Install and wait for the installation to complete.</p>
+<p><img alt="Image" src="_images/1719278544902_6e395fac_45b1_428e_b5ed_dd3045ed1597.png" /></p>
+<p>When the installation is complete, click Finish. At this time, the Qt interface will be opened automatically. You can also start it through the command line. Execute the following command to open Qt Creator in the backstage. When the user opens it, the actual installation path shall prevail:</p>
+<div class="highlight-plain notranslate"><div class="highlight"><pre><span></span>forlinx@ubuntu:~$ cd /home/forlinx/qtcreator-4.7.0/bin
+forlinx@ubuntu:~$ ./qtcreator &amp;
+</pre></div>
+</div>
+<p><img alt="Image" src="_images/1719278545088_f7954df3_4aa6_40d1_9046_723786b916af.png" /></p>
+<p>The Qt Creator tool screen appears. Qt Creator is installed.</p>
+</section>
+</section>
+<section id="related-code-compilation">
+<h2>4. Related Code Compilation<a class="headerlink" href="#related-code-compilation" title="Link to this heading"></a></h2>
+<p>This chapter mainly describes the compiling method of the source code related to the development board, including the kernel source code compilation and the application program compilation.</p>
+<section id="preparation-before-compilation">
+<h3>4.1. Preparation Before Compilation<a class="headerlink" href="#preparation-before-compilation" title="Link to this heading"></a></h3>
+<section id="environment-description">
+<h4>4.1.1 Environment Description<a class="headerlink" href="#environment-description" title="Link to this heading"></a></h4>
+<ul class="simple">
+<li><p>Development environment OS: Ubuntu22.04 64-bit version</p></li>
+<li><p>Cross-toolchain: aarch64-linux-gnu</p></li>
+<li><p>The board uses the Bootloader version: u-boot-2017.09.</p></li>
+<li><p>Development Board Kernel: Linux-5.10.160</p></li>
+<li><p>Development board porting QT version: qt5.15.8</p></li>
+</ul>
+</section>
+<section id="source-code-copy">
+<h4>4.1.2 Source Code Copy<a class="headerlink" href="#source-code-copy" title="Link to this heading"></a></h4>
+<ul class="simple">
+<li><p>Source Code: User Information \ Linux \ Source Code \OK3568_Linux_fs.tar.bz2.0*</p></li>
+</ul>
+<p>Create a working directory</p>
+<div class="highlight-plain notranslate"><div class="highlight"><pre><span></span>forlinx@ubuntu:~$ mkdir -p /home/forlinx/3568	//Create the working directory in order
+</pre></div>
+</div>
+<p>Copy the source code file OK3568_Linux_fs.tar.bz2.0* in the user data to the/home/forlinx/3568 directory of the virtual machine.</p>
+<div class="highlight-plain notranslate"><div class="highlight"><pre><span></span>forlinx@ubuntu:~$ cd /home/forlinx/3568					//Switch to the working directory
+forlinx@ubuntu:~/3568$ cat OK3568_Linux_fs.tar.bz2.0* &gt; OK3568_Linux_fs.tar.bz2
+forlinx@ubuntu:~/3568$ tar -xvf OK3568_Linux_fs.tar.bz2				//Decompress the compressed package in the natural location
+</pre></div>
+</div>
+<p>Just run the command and wait for it to complete.</p>
+<ul class="simple">
+<li><p>Toolkit Path: OK3568-Linux5.10.160-User Profile\Linux\Source\dl.tar.bz2</p></li>
+</ul>
+<p>When compiling buildroot, you will download the toolkit from the official website according to the configuration, download and extract dl.tar.bz2 from the user profile to the buildroot directory, which can reduce the compilation time.</p>
+</section>
+</section>
+<section id="kernel-compilation">
+<h3>4.2 Kernel Compilation<a class="headerlink" href="#kernel-compilation" title="Link to this heading"></a></h3>
+<p><strong>Note:</strong></p>
+<ul class="simple">
+<li><p><strong>After the kernel source code is decompressed for the first time, the source code needs to be compiled as a whole;</strong></p></li>
+<li><p><strong>After compiling as a whole, you can compile separately according to the actual situation;</strong></p></li>
+<li><p><strong>The source code compilation requires a development environment with a running memory of 16G or above. Please do not modify the VM virtual machine image configuration provided by us;</strong></p></li>
+<li><p><strong>In order to shorten the first compilation time, the default full compilation directly uses the compiled file system image without remaking the file system.</strong></p></li>
+</ul>
+<section id="full-compilation-test">
+<h4>4.2.1 Full Compilation Test<a class="headerlink" href="#full-compilation-test" title="Link to this heading"></a></h4>
+<p>Switch to the extracted source code path at the terminal:</p>
+<div class="highlight-plain notranslate"><div class="highlight"><pre><span></span>forlinx@ubuntu:~$ cd /home/forlinx/3568/OK3568_Linux_fs
+</pre></div>
+</div>
+<p>The following operations need to be done in the source directory, and the first compilation needs to specify the chip to use:</p>
+<div class="highlight-plain notranslate"><div class="highlight"><pre><span></span>forlinx@ubuntu: ~/3568/OK3568_Linux_fs$./build.sh chip
+/* Options will be entered after execution，as follows：*/
+Log saved at /home/forlinx/work/3568/OK3568_Linux_fs/output/sessions/2023-10-21_16-45-26
+
+Pick a chip:
+
+1. OK3568
+2. rk3566_rk3568
+3. rk3588
+Which would you like? [1]: 1 /*Enter 1 and press Enter to continue.*/
+Switching to defconfig: /home/forlinx/work/3568/OK3568_Linux_fs/device/rockchip/.chip/OK3568-C-linux_defconfig
+make: Entering directory &#39;/home/forlinx/work/3568/OK3568_Linux_fs/device/rockchip/common&#39;
+#
+# configuration written to /home/forlinx/work/3568/OK3568_Linux_fs/output/.config
+#
+make: Leaving directory &#39;/home/forlinx/work/3568/OK3568_Linux_fs/device/rockchip/common&#39;
+</pre></div>
+</div>
+<p>Afterwards, it can be compiled. The file system under linuxfs is used by default, which is directly packaged. If you need to recompile the buildroot, you need to compile it separately as part of the separate compilation.</p>
+<div class="highlight-plain notranslate"><div class="highlight"><pre><span></span>forlinx@forlinx-ubuntu:~/work/3568/OK3568_Linux_fs$ ./build.sh
+</pre></div>
+</div>
+<p>The final compilation effect is shown in the following figure (the path may be different according to the actual situation):</p>
+<p><img alt="Image" src="_images/1719278519464_b89aebf0_bcc5_4f08_85d7_7a0e0cea8f6a.png" /></p>
+<p>After successful compilation, the corresponding compilation project result file will be generated under the OK3568_Linux_fs/rockdev folder, find the image file there.</p>
+<p><img alt="Image" src="_images/1719278519744_a17e751c_a98e_4d42_baa3_928eee7838b6.png" /></p>
+<p><strong>Note:</strong></p>
+<ul class="simple">
+<li><p><strong>The update. img is packaged for full programming of OTG or TF card, and other files are programmed step by step;</strong></p></li>
+<li><p><strong>In the 3568 5.10 SDK, there is a set of pre-compiled file systems located in the OK3568_Linux_fs/linuxfs directory. When the full-compile script is run, it automatically copies the linuxfs/rootfs.img file to the buildroot/output/OK3568/images directory, and then generates the result of compiling the file system using this pre-compiled file system. This process is designed to significantly reduce the time needed to produce the update.img file during the initial compilation. When compiling the filesystem, it should be compiled separately. After the compilation is complete, replace the linuxfs/rootfs.img file with the newly generated rootfs.img file. In subsequent executions of build.sh, the linuxfs/rootfs.img file will still be used.</strong></p></li>
+</ul>
+</section>
+<section id="individual-compilation-test">
+<h4>4.2.2 Individual Compilation Test<a class="headerlink" href="#individual-compilation-test" title="Link to this heading"></a></h4>
+<p>Full compilation is required before individual compilation, which is done under the kernel source path.</p>
+<p>Before you can build buildroot separately, you need to modify OK3568_Linux_fs/buildroot/package/forlinx/flapp/Config.in</p>
+<p>and OK3568_Linux_fs/buildroot/package/forlinx/flapp/flapp.mk as follows:</p>
+<p>Remove “depends on BR2_PACKAGE_DWKEYBOARD” from OK3568_Linux_fs/buildroot/package/forlinx/flapp/Config.in and then save and exit.</p>
+<p>Remove the DWKeyboard in the parameters of FLAPP_DEPENDENCIES from OK3568_Linux_fs/buildroot/package/forlinx/flapp/flapp.mk</p>
+<div class="highlight-plain notranslate"><div class="highlight"><pre><span></span>forlinx@ubuntu: ~/3568/OK3568_Linux_fs$./build.sh uboot        // Compile the U-Boot independently
+// Generate uboot.img, and the generation path is /OK3568_Linux_fs/u-boot/uboot.img
+forlinx@ubuntu: ~/3568/OK3568_Linux_fs$./build.sh kernel        // Compile the kernel independently
+// Generate boot.img, and the generation path is /OK3568_Linux_fs/kernel/boot.img
+forlinx@ubuntu: ~/3568/OK3568_Linux_fs$./build.sh buildroot    // Compile the Buildroot file system independently
+// Generate rootfs.ext2, and the generation path is /OK3568_Linux_fs/buildroot/output/OK3568/image/rootfs.ext2.
+// Note that in the 3568 5.10 SDK, the factory rootfs.img is built - in under the linuxfs
+directory. Compiling Buildroot independently will overwrite it. If users need to roll
+back to the factory file system, please back it up before performing the independent compilation of the file system.
+// Re - compiling and making the file system takes a long time, generally 4 - 6 hours. If there is no error exit message, please wait patiently.
+forlinx@ubuntu: ~/3568/OK3568_Linux_fs$./build.sh recovery     // Compile the recovery file system independently
+// Generate rootfs.cpio.gz, and the generation path is /OK3568_Linux_fs/output/recovery/ rootfs.cpio.gz
+forlinx@ubuntu: ~/3568/OK3568_Linux_fs$./build.sh updateimg    // Generate update.img independently
+// Use uboot.img, boot.img, and rootfs.ext2 from the above paths to generate update.img, and the path is rockdev/update.img 
+</pre></div>
+</div>
+<p>The kernel in the update. img is not updated after successful compilation. Please flash /OK3568_Linux_fs/kernel/boot.img file step by step; refer to 6.1.3 OTG Flashing Test</p>
+<p><strong>Note: After the user graphical interface configuration modifies the kernel configuration, such as adding the usb-to-serial ch340 driver, execute ./build.sh kernel, burn the boot.img image, and start the development board to find that the graphical configuration does not take effect. You can use one of the following methods to solve it:</strong></p>
+<p><img alt="Image" src="_images/1719278519952_52a94c0e_c1cd_4712_ace8_93361052f010.png" /></p>
+<p>Method 1: Write the configuration directly to the kernel default configuration file/OK3568_Linux_fs/kernel/arch/arm64/configs/OK3568-C-</p>
+<p>linux_defconfig:</p>
+<div class="highlight-plain notranslate"><div class="highlight"><pre><span></span>CONFIG_USB_SERIAL_CH341=y
+forlinx@ubuntu: ~/3568/OK3568_Linux_fs$ ./build.sh kernel
+</pre></div>
+</div>
+<p>Method 2: Configure the kernel graphically, and comment out the source code device/rockchip/common/scripts/mk-kernel. sh the commands shown in the following figure.</p>
+<p><img alt="Image" src="_images/1729748971129_8aaac971_6fc6_46b9_82b1_07ec208f8250.png" /></p>
+<p>Compile kernel/ Makefile file.</p>
+<p><img alt="Image" src="_images/1729748796793_7588d772_02d0_4b6e_a597_68abe1e049a6.png" /></p>
+<div class="highlight-plain notranslate"><div class="highlight"><pre><span></span>forlinx@ubuntu: ~/3568/OK3568_Linux_fs/kernel$ make ARCH=arm64 menuconfig
+</pre></div>
+</div>
+<p>The user configures the kernel as required, writes the configuration to the .config file and then saves and exits.</p>
+<div class="highlight-plain notranslate"><div class="highlight"><pre><span></span>forlinx@ubuntu: ~/3568/OK3568_Linux_fs$ ./build.sh kernel
+</pre></div>
+</div>
+<p><strong>Note: After the user graphical interface configuration modifies the buildroot configuration, such as adding python3 support, execute ./build.sh buildroot, burn the rootfs.ext2 image, and start the development board to find that the graphical configuration does not take effect. You can use one of the following methods to solve it:</strong></p>
+<p>Method 1: Write the configuration directly to the buildroot default configuration file/OK3568_Linux_fs/buildroot/configs/OK3568_defconfig:</p>
+<div class="highlight-plain notranslate"><div class="highlight"><pre><span></span>BR2_PACKAGE_PYTHON3=y	
+BR2_PACKAGE_PYTHON3_PY_PYC=y
+forlinx@ubuntu: ~/3568/OK3568_Linux_fs$ ./build.sh buildroot
+</pre></div>
+</div>
+<p>The following prompt pops up during compilation:</p>
+<p>Found old config, override it? (y/n):y Select y to override the previous .config file.</p>
+<p>Method 2: Graphically configure the buildroot, and comment out the device/rockchip/common/scripts/mk-the location of the following figure in the buildroot. sh:</p>
+<p><img alt="Image" src="_images/1729133678368_3f66e00b_a5eb_4e60_9d18_12bfe4052b4b.png" /></p>
+<div class="highlight-plain notranslate"><div class="highlight"><pre><span></span>forlinx@ubuntu: ~/3568/OK3568_Linux_fs/buildroot/output/OK3568$ make menuconfig
+</pre></div>
+</div>
+<p>The user configures buildroot according to requirements, writes the configuration to the .config file, and then saves and exits.</p>
+<div class="highlight-plain notranslate"><div class="highlight"><pre><span></span>forlinx@ubuntu: ~/3568/OK3568_Linux_fs$ ./build.sh buildroot
+</pre></div>
+</div>
+<p><strong>Tips: If you compile the file system separately and flash it separately, and then find that the programs in the display interface are not added correctly and cannot be opened properly when clicked in the display interface, you can change the configuration item BR2_PACKAGE_DWKEYBOARD=n to y in buildroot/configs/OK3568_defconfig under the source code directory, and then re - compile to restore normal operation.</strong></p>
+</section>
+<section id="location-of-the-cross-compilation-toolchain">
+<h4>4.2.3 Location of the Cross - compilation Toolchain<a class="headerlink" href="#location-of-the-cross-compilation-toolchain" title="Link to this heading"></a></h4>
+<p>The source code path of the driver compilation toolchain:</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>OK3568-linux-sdk5.10/prebuilts/gcc/linux-x86/aarch64/gcc-arm-10.3-2021.07-x86_64-aarch64-none-linux-gnu/bin/aarch64-none-linux-gnu-
+</pre></div>
+</div>
+<p>The source code path of the compilation toolchain for file system applications (such as QT):</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>OK3568-linux-sdk5.10/buildroot/output/OK3568/host/bin/aarch64-linux-
+</pre></div>
+</div>
+<p>The above paths are the locations where the compilation toolchain is generated after executing ./build.sh buildroot. If you use the pre - set host.tar.bz2 method to compile the entire package, you can obtain the compilation toolchain by unpacking host.tar.bz2 in the above paths after the compilation is completed.</p>
+</section>
+</section>
+<section id="image-file-usage">
+<h3>4.3 Image File Usage<a class="headerlink" href="#image-file-usage" title="Link to this heading"></a></h3>
+<p>The update. img is packaged for full programming of OTG or TF card, and other files are programmed step by step. The Image file, generated by a separate compilation, will not be updated in the update.img file. And it needs to be burned using single-step burn (see user manual OTG burn for details).</p>
+</section>
+<section id="qt-creator-environment-configuration">
+<h3>4.4. Qt Creator Environment Configuration<a class="headerlink" href="#qt-creator-environment-configuration" title="Link to this heading"></a></h3>
+<p>Qt is a cross-platform graphics development library, which supports many operating systems. Before compiling, you need to configure the compiling environment of Qt Creator.</p>
+<section id="cross-compiler-configuration">
+<h4>4.4.1 Cross Compiler Configuration<a class="headerlink" href="#cross-compiler-configuration" title="Link to this heading"></a></h4>
+<p><strong>Note: The Qt Creator cross-compiler path needs to be generated after source code full compilation. The host.tar.bz2 is provided for convenience under/OK3568-C (Linux) User Materials/Tools. You can see the HostPrefix path recorded in /host/bin/qt.conf. Then use forlinx development environment to create an absolute path that is consistent with the HostPrefix record. After extracting the host. Tar. Bz2 to the corresponding absolute path, continue with the operations in this chapter. It is highly recommended to fully compile the source code before proceeding with this section.</strong></p>
+<p>1. Click Tools-&gt; Options-&gt; Kits-&gt; Compilers in Qt Creator, and then click Add-&gt; GCC-&gt; C;</p>
+<p>2. Name enters GCC;</p>
+<p>3. Compiler Path Click Browse to select the cross-compiler path for: aarch64-linux-gcc and aarch64-linux-g++, as shown below:</p>
+<p><font style="color:rgb(0, 0, 0);background-color:rgb(218, 234, 252);">️</font><font style="color:#0000FF;">Path: OK3568_Linux_fs/buildroot/output/OK3568/host/bin</font></p>
+<p><strong>Note: The output directory under buildroot needs the source code to be fully compiled before it can be generated.</strong></p>
+<p><img alt="Image" src="_images/1719278520399_97607db9_0b25_4da5_a25f_627035faf646.png" /></p>
+<p>4. Follow the same method to add the GCC compiler, click “Add-&gt;GCC-&gt;C++” on the right, as shown in the figure:</p>
+<p><img alt="Image" src="_images/1719278520769_d05d050c_d4eb_41fe_8191_f158b073c500.png" /></p>
+</section>
+<section id="qt-versions-configuration">
+<h4>4.4.2 Qt Versions Configuration<a class="headerlink" href="#qt-versions-configuration" title="Link to this heading"></a></h4>
+<p>1. Click Tools- &gt; Options- &gt; Qt Versions in Qt Creator;</p>
+<p>2. Click Add, and select OK3568_Linux_fs/buildroot/output/OK3568/host/bin/qmake;</p>
+<p>3. Click open to add;</p>
+<p><img alt="Image" src="_images/1719278521034_d7cf7714_3105_4689_9683_c4a8ed6c6efd.png" /></p>
+<p>4. Then it will return to the Qt Version configuration box, and the Version name can be changed by itself;</p>
+<p>5. Then click Apply and OK.</p>
+</section>
+<section id="kits-configuration">
+<h4>4.4.3 Kits Configuration<a class="headerlink" href="#kits-configuration" title="Link to this heading"></a></h4>
+<p>Kits is a build kit for building and selecting development build environments useful for projects with multiple QT libraries. Add the previously added cross-compiler and QT Version to Kits to build a compilation environment suitable for the development board.</p>
+<p>1. Click Tools- &gt; Options- &gt; Kits in Qt Creator, and then click Add to display the configuration section;</p>
+<p>2. Name changes by itself;</p>
+<p>3. Compiler selects GCC;</p>
+<p>4. Qt version selects the name entered when the Qt version was created.</p>
+<p><img alt="Image" src="_images/1719278521412_b439e3bd_e015_4425_affc_02a52c66f43c.png" /></p>
+<p>5. Then click Apply and OK.</p>
+</section>
+</section>
+<section id="application-compilation-and-operation">
+<h3>4.5 Application Compilation and Operation<a class="headerlink" href="#application-compilation-and-operation" title="Link to this heading"></a></h3>
+<section id="command-line-application-compilation-and-operation">
+<h4>4.5.1 Command Line Application Compilation and Operation<a class="headerlink" href="#command-line-application-compilation-and-operation" title="Link to this heading"></a></h4>
+<p>This subsection uses the watchdog test program, the default program is copied to the /home/forlinx/3568 directory.</p>
+<p>1. Use the cd command to enter the /home/forlinx/work directory;</p>
+<div class="highlight-plain notranslate"><div class="highlight"><pre><span></span>forlinx@ubuntu:~$ cd /home/forlinx/3568/OK3568_Linux_fs/app/forlinx/forlinx_cmd/fltest_watchdog
+</pre></div>
+</div>
+<p>2. Add the cross-compiler path and use make to cross-compile.</p>
+<div class="highlight-plain notranslate"><div class="highlight"><pre><span></span>forlinx@ubuntu: ~/3568/OK3568_Linux_fs/app/forlinx/forlinx_cmd/fltest_watchdog$ export PATH=/home/forlinx/3568/OK3568_Linux_fs/buildroot/output/OK3568/host/bin/:$PATH
+forlinx@ubuntu: ~/3568/OK3568_Linux_fs/app/forlinx/forlinx_cmd/fltest_watchdog$ make	
+aarch64-linux-gcc watchdog.c -o fltest_watchdog  
+generate fltest_watchdog success!!!
+</pre></div>
+</div>
+<p>Use the file command to view the generated file information</p>
+<div class="highlight-plain notranslate"><div class="highlight"><pre><span></span>forlinx@ubuntu:~/3568/OK3568_Linux_fs/app/forlinx/forlinx_cmd/fltest_watchdog$ 
+file fltest_watchdog 
+fltest_watchdog: ELF 64-bit LSB executable, ARM aarch64, version 1 (SYSV), dynamically linked, interpreter /lib/ld-linux-aarch64.so.1, for GNU/Linux 3.7.0, not stripped
+</pre></div>
+</div>
+<p>From the result, you can see that the compiled 64-bit ARM file.</p>
+<p>3. Copy the fltest _ watchdog generated by compiling to the board through U disk or FTP, for example, under the/forlinx path. Take the TF card as an example, and copy it to the development board and run the test.</p>
+<div class="highlight-plain notranslate"><div class="highlight"><pre><span></span>[root@ok3568:/]# cp /run/media/mmcblk1p1/fltest_watchdog /home/forlinx
+[root@ok3568:/]# cd /home/forlinx
+[root@ok3568:/home/forlinx]# ./fltest_watchdog
+Watchdog Ticking Away!
+</pre></div>
+</div>
+<p>4. Refer to the chapter “Watchdog Test” in the user’s manual for the test;</p>
+</section>
+<section id="qt-application-compilation-and-operation">
+<h4>4.5.2 QT Application Compilation and Operation<a class="headerlink" href="#qt-application-compilation-and-operation" title="Link to this heading"></a></h4>
+<p>Open Qt Creator in the development environment (users open it according to their actual path), click File-&gt;Open File or Project in Qt Creator, a pop-up window will appear, select /3568/OK3568_Linux_fs/app/forlinx/forlinx_qt/watchdog/ watchdog.pro</p>
+<p><img alt="Image" src="_images/1719278521691_446f0d66_a6de_4eb4_b2b9_adbac3c23ffb.png" /></p>
+<p>After opening the project, the interface is as follows: (If the page is not automatically changed, please select as shown in the screenshot).</p>
+<p><img alt="Image" src="_images/1719278521907_882537ff_aab0_4987_a170_8c64515f8de1.png" /></p>
+<p>Click Configure Project to adapt to the build environment described in the “Qt Creator Environment Configuration” section of this manual.</p>
+<p>After selection, the interface is as follows:</p>
+<p><img alt="Image" src="_images/1719278522180_76d20235_a09d_4dff_9cb2_0135a93d5442.png" /></p>
+<p>Click Build-&gt;Clean All to clear it. (If the intermediate file is not cleared, it can be deleted manually).</p>
+<p>Click Projects to uncheck Shadow build.</p>
+<p><img alt="Image" src="_images/1719278522421_8c6a5ab7_a9ce_4a72_88be_0902f222e58d.png" /></p>
+<p>Then click Build-&gt; Build All to compile.</p>
+<p><img alt="Image" src="_images/1719278522722_eccde718_c389_4662_ba54_bad05baaceb2.png" /></p>
+<p>After the Build progress bar in the lower right corner is finished, it means that the compilation is finished. At this time, you will see the newly generated binary file fltest_qt_watchdog in the /app/forlinx/forlinx_qt/watchdog directory, as follows:</p>
+<p><img alt="Image" src="_images/1719278523014_cd2cfd24_0659_4cda_be02_d2ebfe309ef1.png" /></p>
+<p>Copy the executable file generated by compiling to the board through U disk or FTP, copy it to the development board, and run the test.</p>
+</section>
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <div class="forlinx-footer-social" style="margin-top: 15px; padding: 0 16px;">
+  <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap;">
+
+    <!-- 左侧版权信息 -->
+    <span style="font-size: 14px; color: #444;">
+      © <a href="https://www.forlinx.net/" target="_blank" style="color: inherit; text-decoration: none;">Forlinx Embedded</a>
+    </span>
+
+    <!-- 右侧社交图标 -->
+    <div>
+      <a href="https://www.facebook.com/Forlinx-Embedded-177890724336237" target="_blank">
+        <i class="fab fa-facebook fa-lg" style="margin: 0 6px; color:#3b5998;"></i>
+      </a>
+      <a href="https://www.linkedin.com/company/forlinx-embedded-technology-co-ltd/" target="_blank">
+        <i class="fab fa-linkedin fa-lg" style="margin: 0 6px; color:#0077b5;"></i>
+      </a>
+      <a href="https://x.com/ForlinxOfficial" target="_blank">
+        <i class="fab fa-x-twitter fa-lg" style="margin: 0 6px; color:#000;"></i>
+      </a>
+      <a href="https://www.youtube.com/@forlinxembedded" target="_blank">
+        <i class="fab fa-youtube fa-lg" style="margin: 0 6px; color:#FF0000;"></i>
+      </a>
+      <a href="https://github.com/ForlinxEmbedded" target="_blank">
+        <i class="fab fa-github fa-lg" style="margin: 0 6px; color:#333;"></i>
+      </a>
+      <a href="https://www.forlinx.net/" target="_blank">
+        <i class="fas fa-globe fa-lg" style="margin: 0 6px; color:#2274A5;"></i>
+      </a>
+    </div>
+
+  </div>
+</div>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+<script defer src="https://static.cloudflareinsights.com/beacon.min.js/v8c78df7c7c0f484497ecbca7046644da1771523124516" integrity="sha512-8DS7rgIrAmghBFwoOTujcf6D9rXvH8xm8JQ1Ja01h9QX8EzXldiszufYa4IFfKdLUKTTrnSFXLDkUEOTrZQ8Qg==" data-cf-beacon='{"version":"2024.11.0","token":"0de41a64b6de42818877b13f8f6f5b48","r":1,"server_timing":{"name":{"cfCacheStatus":true,"cfEdge":true,"cfExtPri":true,"cfL4":true,"cfOrigin":true,"cfSpeedBrain":true},"location_startswith":null}}' crossorigin="anonymous"></script>
+</body>
+</html>
